@@ -12,10 +12,10 @@
         <!--  Place new controls here  -->
         <Label
             HorizontalOptions="Center"
-            Text="Welcome to Xamarin.Forms!"
+            Text="Welcome to AssetMan!"
             VerticalOptions="CenterAndExpand" />
 
-        <Image Source="ic_warning" />
+        <Image Source="logo" />
     </StackLayout>
 
 </ContentPage>
