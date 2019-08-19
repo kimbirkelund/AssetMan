@@ -2,15 +2,23 @@
 
 Resize UWP, Xamarin.Android and Xamarin.iOS assets automatically at build time.
 
+This is, initially, a rebranding of [Assetxport](https://github.com/dotnet-ad/Assetxport), released under MIT, with the intention of supporting and furthering the project.
+
+
 ## Install
 
-Available on NuGet
+Currently not available.
+
+<!--
+ Available on NuGet
 
 [![NuGet](https://img.shields.io/nuget/v/Assetxport.svg?label=NuGet)](https://www.nuget.org/packages/Assetxport/)
+-->
+
 
 ## Usage
 
-The easiest way is to use **Assetxport** from its build task. Simply add a [NuGet](https://www.nuget.org/packages/Assetxport/) package reference to your **Xamarin.iOS**, **Xamarin.Android** or **Universal Windows Platform** project and add a `Config.assets.json` configuration file at the root of your project.
+The easiest way is to use **AssetMan** from its build task. Simply add the package reference to your **Xamarin.iOS**, **Xamarin.Android** or **Universal Windows Platform** project and add a `Config.assets.json` configuration file at the root of your project.
 
 `Config.assets.json`
 
@@ -25,7 +33,7 @@ The easiest way is to use **Assetxport** from its build task. Simply add a [NuGe
 ```json
 {
   "Platform": "iOS",
-  "Input": [ "../Assetxport.Sample.Cli/Images/" ],
+  "Input": [ "../AssetMan.Sample.Cli/Images/" ],
   "Output": "Assets.xcassets"
 }
 ```
@@ -70,7 +78,3 @@ The tool uses [SkiaSharp](https://github.com/mono/SkiaSharp) to resize all image
 Contributions are welcome! If you find a bug please report it and if you want a feature please report it.
 
 If you want to contribute code please file an issue and create a branch off of the current dev branch and file a pull request.
-
-## License
-
-MIT © [Aloïs Deniel](http://aloisdeniel.github.io)
