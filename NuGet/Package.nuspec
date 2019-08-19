@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>Assetxport</id>
+    <id>AssetMan</id>
     <version>$version$</version>
-    <title>Assetxport</title>
+    <title>AssetMan</title>
     <authors>Aloïs Deniel</authors>
     <owners>Aloïs Deniel</owners>
-    <licenseUrl>https://github.com/aloisdeniel/Assetxport/blob/master/LICENSE</licenseUrl>
-    <projectUrl>https://github.com/aloisdeniel/Assetxport/</projectUrl>
-    <iconUrl>https://raw.githubusercontent.com/aloisdeniel/Assetxport/master/Documentation/Logo.png</iconUrl>
+    <licenseUrl>https://github.com/aloisdeniel/AssetMan/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/aloisdeniel/AssetMan/</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/aloisdeniel/AssetMan/master/Documentation/Logo.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Resize UWP, Xamarin.Android and Xamarin.iOS assets automatically.</description>
     <copyright>Copyright 2017</copyright>
@@ -16,15 +16,15 @@
   </metadata>
    <files>
      <!-- Android -->
-     <file src="..\Sources\Assetxport.targets" target="build\MonoAndroid10\Assetxport.targets"/>
+     <file src="..\Sources\AssetMan.targets" target="build\MonoAndroid10\AssetMan.targets"/>
 
      <!-- iOS -->
-	 <file src="..\Sources\Assetxport.targets" target="build\Xamarin.iOS10\Assetxport.targets"/>
+	 <file src="..\Sources\AssetMan.targets" target="build\Xamarin.iOS10\AssetMan.targets"/>
 
      <!-- UWP -->
-     <file src="..\Sources\Assetxport.targets" target="build\uap\Assetxport.targets"/>
+     <file src="..\Sources\AssetMan.targets" target="build\uap\AssetMan.targets"/>
 
      <!-- Cli -->
-     <file src="..\Sources\Assetxport.Cli\bin\Release\**\*.*" target="tools" />
+     <file src="..\Sources\AssetMan.Cli\bin\Release\**\*.*" target="tools" />
    </files>
 </package>

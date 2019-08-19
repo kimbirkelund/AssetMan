@@ -1,0 +1,27 @@
+﻿<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+ <!-- Default inputs parameters -->
+	
+  <PropertyGroup>
+	<AssetManCli Condition=" '$(AssetManCli)' == '' ">$(MSBuildThisFileDirectory)..\..\tools\AssetMan.Cli.exe</AssetManCli>
+  </PropertyGroup>
+
+ <!-- 1. Finding all option files that ends with ".assets.json" -->
+	
+  <Target Name="CollectAssetManFiles" BeforeTargets="AssetMan">
+    <ItemGroup>
+     <AssetManFilesRelative Include="@(None)" Condition="$([System.String]::Copy('%(Identity)').EndsWith('.assets.json'))"/>
+     <AssetManFilesAbsolute Include="%(AssetManFilesRelative.Fullpath)"/>
+    </ItemGroup>
+  </Target>
+
+ <!-- 2. Exporting assets with "Cli" -->
+
+  <Target Name="AssetMan" BeforeTargets="BeforeBuild">
+    <Exec Command='$(AssetManCli) -Options "@(AssetManFilesAbsolute)"'  ConsoleToMSBuild="true" >
+        <Output TaskParameter="ConsoleOutput" PropertyName="AssetManOutput" />
+    </Exec>
+    <Message Text="$(AssetManOutput)"/>
+  </Target>
+
+</Project>

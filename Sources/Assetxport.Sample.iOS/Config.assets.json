@@ -1,5 +1,0 @@
-﻿{
-  "Platform": "iOS",
-  "Input": [ "../Assetxport.Sample.Cli/Images/" ],
-  "Output": "Assets.xcassets"
-}
