@@ -1,5 +1,5 @@
 ﻿{
   "Platform": "UWP",
   "Input": [ "../../AssetMan.Sample.Cli/Images/" ],
-  "Output": "Assets"
+  "Output": ""
 }

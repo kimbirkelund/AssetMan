@@ -48,4 +48,16 @@
         </ItemGroup>
     </Target>
 
+    <Target Name="IncludeAndroidAssets"
+            AfterTargets="AssetMan"
+            Condition=" '$(TargetPlatformIdentifier)' == 'UAP' ">
+        <Message Text="Including iOS resources $(GeneratedAssets)" />
+
+        <ItemGroup>
+            <Content Include="$(GeneratedAssets)">
+                <Visible>false</Visible>
+            </Content>
+        </ItemGroup>
+    </Target>
+
 </Project>
