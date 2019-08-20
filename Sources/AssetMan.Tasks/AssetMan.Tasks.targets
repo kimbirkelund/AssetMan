@@ -36,7 +36,7 @@
         </ItemGroup>
     </Target>
 
-    <Target Name="IncludeAndroidAssets"
+    <Target Name="IncludeiOSAssets"
             AfterTargets="AssetMan"
             Condition=" '$(TargetFrameworkIdentifier)' == 'Xamarin.iOS' ">
         <Message Text="Including iOS resources $(GeneratedAssets)" />
@@ -48,10 +48,10 @@
         </ItemGroup>
     </Target>
 
-    <Target Name="IncludeAndroidAssets"
+    <Target Name="IncludeUWPAssets"
             AfterTargets="AssetMan"
             Condition=" '$(TargetPlatformIdentifier)' == 'UAP' ">
-        <Message Text="Including iOS resources $(GeneratedAssets)" />
+        <Message Text="Including UWP resources $(GeneratedAssets)" />
 
         <ItemGroup>
             <Content Include="$(GeneratedAssets)">
