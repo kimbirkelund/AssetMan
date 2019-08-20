@@ -17,11 +17,21 @@
 
  <!-- 2. Exporting assets with "Cli" -->
 
-  <Target Name="AssetMan" BeforeTargets="BeforeBuild">
-    <Exec Command='$(AssetManCli) -Options "@(AssetManFilesAbsolute)"'  ConsoleToMSBuild="true" >
+  <Target Name="AssetMan" BeforeTargets="PrepareResources">
+    <Exec Command='$(AssetManCli) -Options "@(AssetManFilesAbsolute)"' ConsoleToMSBuild="true" >
         <Output TaskParameter="ConsoleOutput" PropertyName="AssetManOutput" />
     </Exec>
     <Message Text="$(AssetManOutput)"/>
   </Target>
+
+<!-- 3. Include generated files in project -->
+
+ <Target Name="IncludeAndroidAssets" AfterTargets="AssetMan" Condition=" $(TargetFrameworkIdentifier) == 'MonoAndroid' OR $(TargetFrameworkIdentifier) == 'MonoDroid' ">
+     <Message Text="Including Android resources $(AssetManOutput)" />
+
+     <ItemGroup>
+        <AndroidResource Include="$(AssetManOutput)" />
+     </ItemGroup>
+ </Target>
 
 </Project>

@@ -1,86 +1,100 @@
-﻿namespace AssetMan.Cli
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using Args;
+
+namespace AssetMan.Cli
 {
-	using System.IO;
-	using System.Linq;
-	using Args;
-	using System;
-	using System.ComponentModel;
-	using System.Collections.Generic;
+    internal class MainClass
+    {
+        public static void Main(string[] stringArgs)
+        {
+            Log.Write = Console.WriteLine;
 
-	class MainClass
-	{
-		[ArgsModel(SwitchDelimiter = "-")]
-		[Description("Assertxport")]
-		public class ExportArgs
-		{
-			[Description("A path to an option configuration file.")]
-			public string Options { get; set; }
+            var args = Configuration.Configure<ExportArgs>()
+                                    .CreateAndBind(stringArgs);
 
-			[Description("The path to a folder that contains all your assets.")]
-			public string Input { get; set; }
+            if (args.Debug)
+            {
+                if (Debugger.IsAttached)
+                    Debugger.Break();
+                else
+                    Debugger.Launch();
+            }
 
-			[Description("The path to the output folder that will contain all your exported assets.")]
-			public string Output { get; set; }
+            var options = ParseOptions(args);
 
-			[Description("The target platform (iOS|Android|UWP)")]
-			public string Platform { get; set; }
-		}
+            if (options.Length == 0)
+            {
+                Console.WriteLine("No assets to export.");
+                return;
+            }
 
-		private static Options[] ParseOptions(ExportArgs args)
-		{
-			var result = new List<Options>();
+            foreach (var option in options)
+            {
+                Console.WriteLine("Export starting...");
+                Console.WriteLine($"Output: {option.Output}");
+                foreach (var input in option.Input)
+                    Console.WriteLine($"Input: {input}\n");
 
-			if (!string.IsNullOrEmpty(args.Options))
-			{
-				foreach (var file in args.Options.Split(';').Select(x => x.Trim()))
-				{
-					var options = Options.Load(file);
-					var parent = Path.GetDirectoryName(file);
-					options.Output = Path.Combine(parent, options.Output);
-					options.Input = options.Input.Select(x => Path.Combine(parent, x)).ToArray();
-					result.Add(options);
-				}
-			}
+                var exporter = new Exporter();
+                exporter.Export(option);
+                Console.WriteLine("Export succeeded.");
+            }
+        }
 
-			if (!string.IsNullOrEmpty(args.Input) && !string.IsNullOrEmpty(args.Output) && !string.IsNullOrEmpty(args.Platform))
-			{
-				var options = new Options();
-				options.Input = options.Input.Concat(new[] { args.Input }).ToArray();
-				options.Output = args.Output;
-				options.Platform = args.Platform;
-				result.Add(options);
-			}
+        private static Options[] ParseOptions(ExportArgs args)
+        {
+            var result = new List<Options>();
 
-			return result.ToArray();
-		}
+            if (!string.IsNullOrEmpty(args.Options))
+            {
+                foreach (var file in args.Options.Split(';')
+                                         .Select(x => x.Trim()))
+                {
+                    var options = Options.Load(file);
+                    var parent = Path.GetDirectoryName(file);
+                    options.Output = Path.Combine(parent, options.Output);
+                    options.Input = options.Input.Select(x => Path.Combine(parent, x))
+                                           .ToArray();
+                    result.Add(options);
+                }
+            }
 
-		public static void Main(string[] stringArgs)
-		{
-			Log.Write = (m) => Console.WriteLine(m);
+            if (!string.IsNullOrEmpty(args.Input) && !string.IsNullOrEmpty(args.Output) && !string.IsNullOrEmpty(args.Platform))
+            {
+                var options = new Options();
+                options.Input = options.Input.Concat(new[] { args.Input })
+                                       .ToArray();
+                options.Output = args.Output;
+                options.Platform = args.Platform;
+                result.Add(options);
+            }
 
-			var args = Configuration.Configure<ExportArgs>().CreateAndBind(stringArgs);
-			var options = ParseOptions(args);
+            return result.ToArray();
+        }
 
-			if(options.Length == 0)
-			{
-				Console.WriteLine("No assets to export.");
-				return;
-			}
+        [ArgsModel(SwitchDelimiter = "-")]
+        [Description("Assertxport")]
+        public class ExportArgs
+        {
+            [Description("Launch debugger if true.")]
+            public bool Debug { get; set; }
 
-			foreach (var option in options)
-			{
+            [Description("The path to a folder that contains all your assets.")]
+            public string Input { get; set; }
 
-				Console.WriteLine("Export starting...");
-				Console.WriteLine($"Output: {option.Output}");
-				foreach (var input in option.Input)
-				{
-					Console.WriteLine($"Input: {input}\n");
-				}
+            [Description("A path to an option configuration file.")]
+            public string Options { get; set; }
 
-				var exporter = new Exporter();
-				exporter.Export(option);
-				Console.WriteLine("Export succeeded.");
-			}
-		}
-	}
+            [Description("The path to the output folder that will contain all your exported assets.")]
+            public string Output { get; set; }
+
+            [Description("The target platform (iOS|Android|UWP)")]
+            public string Platform { get; set; }
+        }
+    }
 }

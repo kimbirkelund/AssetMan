@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <AssetManCli>$(SolutionDir)\AssetMan.Cli\bin\Debug\AssetMan.Cli.exe</AssetManCli>
+    <AssetManCliBasePath>$(SolutionDir)/AssetMan.Cli/bin/Debug</AssetManCliBasePath>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -89,13 +89,7 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\icon.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\drawable-hdpi\" />
-    <Folder Include="Resources\drawable-xhdpi\" />
-    <Folder Include="Resources\drawable-xxhdpi\" />
-    <Folder Include="Resources\drawable-xxxhdpi\" />
-    <Folder Include="Resources\drawable\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\AssetMan.Sample\AssetMan.Sample.csproj">
       <Project>{417C5237-97CD-4FF9-BC73-FDAD930904D4}</Project>
@@ -103,5 +97,6 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
-  <Import Project="..\..\AssetMan.targets" />
+  <Import Project="..\..\AssetMan.Tasks\AssetMan.Tasks.props" />
+  <Import Project="..\..\AssetMan.Tasks\AssetMan.Tasks.targets" />
 </Project>

@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project ToolsVersion="4.0"
+         xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <!-- 1. Exporting assets with msbuild task -->
+
+    <Target Name="AssetMan"
+            BeforeTargets="BeforeBuild">
+
+        <Message Text="AssetMan is exporting assets..." />
+        <Message Text="AssetManCliBasePath: $(AssetManCliBasePath)"/>
+        <Message Text="AssetManCliPath: $(AssetManCliPath)"/>
+        <Message Text="TargetFrameworkIdentifier: $(TargetFrameworkIdentifier)"/>
+
+        <ExportAssets Debug="$(DebugAssetMan)"
+                      AssetManCliPath="$(AssetManCliPath)">
+            <Output TaskParameter="GeneratedAssets"
+                    PropertyName="GeneratedAssets" />
+        </ExportAssets>
+
+        <Message Text="AssetMan exported assets." />
+    </Target>
+
+    <!-- 3. Include generated files in project -->
+
+    <Target Name="IncludeAndroidAssets"
+            AfterTargets="AssetMan"
+            Condition=" $(TargetFrameworkIdentifier) == 'MonoAndroid' OR $(TargetFrameworkIdentifier) == 'MonoDroid' ">
+        <Message Text="Including Android resources $(AssetManOutput)" />
+
+        <ItemGroup>
+            <AndroidResource Include="$(GeneratedAssets)" />
+        </ItemGroup>
+    </Target>
+
+</Project>

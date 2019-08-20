@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project ToolsVersion="4.0"
+         xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+         TreatAsLocalProperty="TaskAssembly">
+
+    <PropertyGroup>
+        <AssetManCliBasePath Condition=" '$(AssetManCliBasePath)' == '' ">$(MSBuildThisFileDirectory)</AssetManCliBasePath>
+        <AssetManCliPath Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' ">$(AssetManCliBasePath)/net461/AssetMan.Cli.exe</AssetManCliPath>
+        <AssetManCliPath Condition=" '$(AssetManCliPath)' == '' ">$(AssetManCliBasePath)/netcoreapp2.2/AssetMan.Cli.dll</AssetManCliPath>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TaskAssembly Condition=" '$(MSBuildRuntimeType)' == 'Core'">.\bin\Debug\netstandard2.0\AssetMan.Tasks.dll</TaskAssembly>
+        <TaskAssembly Condition=" '$(MSBuildRuntimeType)' != 'Core'">.\bin\Debug\net461\AssetMan.Tasks.dll</TaskAssembly>
+    </PropertyGroup>
+
+    <UsingTask TaskName="ExportAssets"
+               AssemblyFile="$(TaskAssembly)"/>
+
+</Project>

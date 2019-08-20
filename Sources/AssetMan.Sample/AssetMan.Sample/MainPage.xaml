@@ -7,13 +7,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackLayout>
+    <StackLayout VerticalOptions="Center">
 
         <!--  Place new controls here  -->
-        <Label
-            HorizontalOptions="Center"
-            Text="Welcome to AssetMan!"
-            VerticalOptions="CenterAndExpand" />
+        <Label HorizontalOptions="Center" Text="Welcome to AssetMan!" />
 
         <Image Source="logo" />
     </StackLayout>
