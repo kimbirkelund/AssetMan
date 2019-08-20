@@ -290,3 +290,5 @@ __pycache__/
 Sources/AssetMan.Sample/AssetMan.Sample.Android/Resources/drawable-*/
 Sources/AssetMan.Sample/AssetMan.Sample.iOS/Assets.xcassets/
 Sources/AssetMan.Sample/AssetMan.Sample.UWP/logo.*.png
+
+Sources/AssetMan.Sample/AssetMan.Sample.Android/Resources/Resource.designer.cs
