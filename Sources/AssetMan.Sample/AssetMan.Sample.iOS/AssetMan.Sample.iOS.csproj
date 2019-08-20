@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <AssetManCli>$(SolutionDir)\AssetMan.Cli\bin\Debug\AssetMan.Cli.exe</AssetManCli>
+    <AssetManCliBasePath>$(SolutionDir)/AssetMan.Cli/bin/Debug</AssetManCliBasePath>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -134,5 +134,6 @@
       <Name>AssetMan.Sample</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="..\..\AssetMan.targets" />
+  <Import Project="..\..\AssetMan.Tasks\AssetMan.Tasks.props" />
+  <Import Project="..\..\AssetMan.Tasks\AssetMan.Tasks.targets" />
 </Project>

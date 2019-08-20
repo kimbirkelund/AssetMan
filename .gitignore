@@ -288,3 +288,4 @@ __pycache__/
 *.xsd.cs
 
 Sources/AssetMan.Sample/AssetMan.Sample.Android/Resources/drawable-*/*
+Sources/AssetMan.Sample/AssetMan.Sample.iOS/Assets.xcassets/*
