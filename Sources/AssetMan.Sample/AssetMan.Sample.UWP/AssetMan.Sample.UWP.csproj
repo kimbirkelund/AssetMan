@@ -168,6 +168,6 @@
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
-  <Import Project="..\..\AssetMan.Tasks\AssetMan.Tasks.props" />
-  <Import Project="..\..\AssetMan.Tasks\AssetMan.Tasks.targets" />
+  <Import Project="..\..\AssetMan.Tasks\AssetMan.props" />
+  <Import Project="..\..\AssetMan.Tasks\AssetMan.targets" />
 </Project>

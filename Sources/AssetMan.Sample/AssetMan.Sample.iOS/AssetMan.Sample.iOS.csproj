@@ -146,6 +146,6 @@
       <Name>AssetMan.Sample</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="..\..\AssetMan.Tasks\AssetMan.Tasks.props" />
-  <Import Project="..\..\AssetMan.Tasks\AssetMan.Tasks.targets" />
+  <Import Project="..\..\AssetMan.Tasks\AssetMan.props" />
+  <Import Project="..\..\AssetMan.Tasks\AssetMan.targets" />
 </Project>

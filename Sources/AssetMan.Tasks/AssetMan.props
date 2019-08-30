@@ -10,8 +10,8 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <TaskAssembly Condition=" '$(MSBuildRuntimeType)' == 'Core'">.\bin\Debug\netstandard2.0\AssetMan.Tasks.dll</TaskAssembly>
-        <TaskAssembly Condition=" '$(MSBuildRuntimeType)' != 'Core'">.\bin\Debug\net461\AssetMan.Tasks.dll</TaskAssembly>
+        <TaskAssembly Condition=" '$(MSBuildRuntimeType)' == 'Core'">./bin/Debug/netstandard2.0/AssetMan.Tasks.dll</TaskAssembly>
+        <TaskAssembly Condition=" '$(MSBuildRuntimeType)' != 'Core'">./bin/Debug/net461/AssetMan.Tasks.dll</TaskAssembly>
     </PropertyGroup>
 
     <UsingTask TaskName="ExportAssets"

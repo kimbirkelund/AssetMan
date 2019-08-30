@@ -118,6 +118,6 @@
     <AndroidResource Include="Resources\drawable-xxxhdpi\logo_manual.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
-  <Import Project="..\..\AssetMan.Tasks\AssetMan.Tasks.props" />
-  <Import Project="..\..\AssetMan.Tasks\AssetMan.Tasks.targets" />
+  <Import Project="..\..\AssetMan.Tasks\AssetMan.props" />
+  <Import Project="..\..\AssetMan.Tasks\AssetMan.targets" />
 </Project>
