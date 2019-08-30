@@ -31,11 +31,12 @@
 			var images = string.Join(", ", densities.Select(d => string.Format(ContentsItemTemplate, CreateAssetFilename(asset.FilenameWithoutQualifierAndExtension, asset.Extension, d.Key, d.Value), d.Value.ToString("0.##"))));
 			contentFile.CreateParentDirectory();
 			File.WriteAllText(contentFile, string.Format(ContentsTemplate, images));
+            Log.Write($"AssetManGeneratedFile({contentFile})");
 		}
 
-		#endregion
+        #endregion
 
-		public override void Export(IAsset asset, string folder)
+        public override void Export(IAsset asset, string folder)
 		{
 			base.Export(asset, folder);
 			this.GenerateContents(asset, folder);

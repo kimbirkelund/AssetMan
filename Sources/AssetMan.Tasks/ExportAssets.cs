@@ -11,7 +11,7 @@ namespace AssetMan.Tasks
 {
     public class ExportAssets : ToolTask
     {
-        private static readonly Regex _outputRegex = new Regex(@"\[(?<sourceAsset>.+) \(\d+x\d+\)\([^)]+\)\] ->[^[]+\[(?<generatedAsset>.+) \(\d+x\d+\)\]",
+        private static readonly Regex _outputRegex = new Regex(@"^AssetManGeneratedFile\((?<AssetManGeneratedFile>.+)\)|AssetManSourceFolder\((?<AssetManSourceFolder>.+)\)$",
                                                                RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         private readonly List<string> _generatedAssets = new List<string>();
@@ -48,7 +48,7 @@ namespace AssetMan.Tasks
 
         protected override string GenerateCommandLineCommands()
         {
-            var optionsFiles = Directory.GetFiles(GetWorkingDirectory() ?? Environment.CurrentDirectory, "*.assets.json");
+            var optionsFiles = Directory.GetFiles(GetBaseDirectory(), "*.assets.json");
 
             var builder = new CommandLineBuilder();
 
@@ -78,16 +78,29 @@ namespace AssetMan.Tasks
             var match = _outputRegex.Match(singleLine);
             if (match.Success)
             {
-                var generatedAsset = match.Groups["generatedAsset"]
-                                          .Value;
-                var sourceAsset = match.Groups["sourceAsset"]
-                                       .Value;
-                if (File.Exists(generatedAsset) && File.Exists(sourceAsset))
-                {
-                    _generatedAssets.Add(generatedAsset);
-                    _sourceAssets.Add(sourceAsset);
-                }
+                var generatedAssetFile = match.Groups["AssetManGeneratedFile"]
+                                              ?.Value;
+                if (File.Exists(generatedAssetFile))
+                    _generatedAssets.Add(MakePathRelativeToCurrentDirectory(generatedAssetFile));
+
+
+                var sourceAssetFolder = match.Groups["AssetManSourceFolder"]
+                                             ?.Value;
+                if (File.Exists(sourceAssetFolder))
+                    _sourceAssets.Add(sourceAssetFolder);
             }
+        }
+
+        private string GetBaseDirectory()
+        {
+            return GetWorkingDirectory() ?? Environment.CurrentDirectory;
+        }
+
+        private string MakePathRelativeToCurrentDirectory(string generatedAsset)
+        {
+            return generatedAsset.Substring(GetBaseDirectory()
+                                                .Length)
+                                 .TrimStart(Path.DirectorySeparatorChar);
         }
     }
 }

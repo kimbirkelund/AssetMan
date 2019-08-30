@@ -98,7 +98,9 @@
 				Log.Write($"[{this.Path} ({this.bitmap.Width}x{this.bitmap.Height})({this.Density}x)] -> Didn't generate [{path} ({width}x{height})] because it already exists.");
 
 			}
-		}
+
+            Log.Write($"AssetManGeneratedFile({path})");
+        }
 
 		public void Export(string path, double density)
 		{
