@@ -4,7 +4,7 @@
          TreatAsLocalProperty="TaskAssembly">
 
     <PropertyGroup>
-        <AssetManBasePath Condition=" '$(AssetManBasePath)' == '' ">$(MSBuildThisFileDirectory)/tools</AssetManBasePath>
+        <AssetManBasePath Condition=" '$(AssetManBasePath)' == '' ">$(MSBuildThisFileDirectory)/../../tools</AssetManBasePath>
         <AssetManCliPath Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' ">$(AssetManBasePath)/net461/AssetMan.Cli.exe</AssetManCliPath>
         <AssetManCliPath Condition=" '$(AssetManCliPath)' == '' ">$(AssetManBasePath)/netcoreapp2.2/AssetMan.Cli.dll</AssetManCliPath>
     </PropertyGroup>
