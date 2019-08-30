@@ -6,7 +6,7 @@
     <authors>Kim Birkelund</authors>
     <description>Cross platform management for Xamarin projects.</description>
     <repository type="git" url="https://github.com/kimbirkelund/AssetMan" />
-    <iconUrl>https://github.com/kimbirkelund/AssetMan/raw/5f80980cd85ee4b1dd97196dad69df01b361fa59/Documentation/Logo.png</iconUrl>
+    <iconUrl>https://github.com/kimbirkelund/AssetMan/raw/master/logo/logo.png</iconUrl>
     <tags>Xamarin asset management cross platform xplat</tags>
     <license type="expression">MIT</license>
   </metadata>
