@@ -4,14 +4,17 @@
          TreatAsLocalProperty="TaskAssembly">
 
     <PropertyGroup>
-        <AssetManCliBasePath Condition=" '$(AssetManCliBasePath)' == '' ">$(MSBuildThisFileDirectory)</AssetManCliBasePath>
-        <AssetManCliPath Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' ">$(AssetManCliBasePath)/net461/AssetMan.Cli.exe</AssetManCliPath>
-        <AssetManCliPath Condition=" '$(AssetManCliPath)' == '' ">$(AssetManCliBasePath)/netcoreapp2.2/AssetMan.Cli.dll</AssetManCliPath>
+        <AssetManBasePath Condition=" '$(AssetManBasePath)' == '' ">$(MSBuildThisFileDirectory)/tools</AssetManBasePath>
+        <AssetManCliPath Condition=" '$(TargetFrameworkIdentifier)' == '.NETFramework' ">$(AssetManBasePath)/net461/AssetMan.Cli.exe</AssetManCliPath>
+        <AssetManCliPath Condition=" '$(AssetManCliPath)' == '' ">$(AssetManBasePath)/netcoreapp2.2/AssetMan.Cli.dll</AssetManCliPath>
     </PropertyGroup>
 
     <PropertyGroup>
-        <TaskAssembly Condition=" '$(MSBuildRuntimeType)' == 'Core'">./bin/Debug/netstandard2.0/AssetMan.Tasks.dll</TaskAssembly>
-        <TaskAssembly Condition=" '$(MSBuildRuntimeType)' != 'Core'">./bin/Debug/net461/AssetMan.Tasks.dll</TaskAssembly>
+        <TaskAssembly Condition=" '$(MSBuildRuntimeType)' == 'Core'">$(AssetManBasePath)/netstandard2.0/AssetMan.Tasks.dll</TaskAssembly>
+        <TaskAssembly Condition=" '$(MSBuildRuntimeType)' != 'Core'">$(AssetManBasePath)/net461/AssetMan.Tasks.dll</TaskAssembly>
+
+        <TaskAssembly Condition=" '$(MSBuildRuntimeType)' == 'Core' AND !Exists('$(TaskAssembly)') ">./bin/Debug/netstandard2.0/AssetMan.Tasks.dll</TaskAssembly>
+        <TaskAssembly Condition=" '$(MSBuildRuntimeType)' != 'Core' AND !Exists('$(TaskAssembly)') ">./bin/Debug/net461/AssetMan.Tasks.dll</TaskAssembly>
     </PropertyGroup>
 
     <UsingTask TaskName="ExportAssets"

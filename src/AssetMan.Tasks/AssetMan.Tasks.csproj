@@ -9,7 +9,7 @@
     <BuildOutputTargetFolder>tasks</BuildOutputTargetFolder>
 
     <NuspecFile>AssetMan.Tasks.nuspec</NuspecFile>
-    <NuspecProperties>version=$(PackageVersion);PublishDir=$(PublishDir)</NuspecProperties>
+    <NuspecProperties>version=$(PackageVersion);PublishDir=$(PublishDir);Configuration=$(Configuration)</NuspecProperties>
   </PropertyGroup>
 
   <ItemGroup>
