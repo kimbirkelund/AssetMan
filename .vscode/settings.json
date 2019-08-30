@@ -1,0 +1,5 @@
+{
+    "powershell.codeFormatting.openBraceOnSameLine": false,
+    "powershell.codeFormatting.pipelineIndentationStyle": "IncreaseIndentationForFirstPipeline",
+    "powershell.codeFormatting.preset": "Allman"
+}
