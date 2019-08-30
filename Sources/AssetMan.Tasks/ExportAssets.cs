@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -10,8 +11,11 @@ namespace AssetMan.Tasks
 {
     public class ExportAssets : ToolTask
     {
-        private static readonly Regex _outputRegex = new Regex(@"->[^[]+\[(?<generatedAsset>.+) \(\d+x\d+\)\]", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private static readonly Regex _outputRegex = new Regex(@"\[(?<sourceAsset>.+) \(\d+x\d+\)\([^)]+\)\] ->[^[]+\[(?<generatedAsset>.+) \(\d+x\d+\)\]",
+                                                               RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
         private readonly List<string> _generatedAssets = new List<string>();
+        private readonly List<string> _sourceAssets = new List<string>();
 
         public string AssetManCliPath { get; set; }
 
@@ -19,6 +23,11 @@ namespace AssetMan.Tasks
 
         [Output]
         public string[] GeneratedAssets => _generatedAssets.ToArray();
+
+        [Output]
+        public string[] SourceAssetFolders => _sourceAssets.Select(Path.GetDirectoryName)
+                                                           .Distinct()
+                                                           .ToArray();
 
         protected override MessageImportance StandardOutputLoggingImportance => MessageImportance.Normal;
 
@@ -71,8 +80,13 @@ namespace AssetMan.Tasks
             {
                 var generatedAsset = match.Groups["generatedAsset"]
                                           .Value;
-                if (File.Exists(generatedAsset))
+                var sourceAsset = match.Groups["sourceAsset"]
+                                       .Value;
+                if (File.Exists(generatedAsset) && File.Exists(sourceAsset))
+                {
                     _generatedAssets.Add(generatedAsset);
+                    _sourceAssets.Add(sourceAsset);
+                }
             }
         }
     }
