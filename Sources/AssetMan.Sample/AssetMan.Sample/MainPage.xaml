@@ -12,7 +12,7 @@
         <!--  Place new controls here  -->
         <Label HorizontalOptions="Center" Text="Welcome to AssetMan!" />
 
-        <Image Source="logo.png" />
+        <Image Source="logo" />
     </StackLayout>
 
 </ContentPage>

@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project ToolsVersion="4.0"
          xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
-         TreatAsLocalProperty="GeneratedAssets">
+         TreatAsLocalProperty="GeneratedAssets;SourceAssetFolders">
 
     <!-- 1. Exporting assets with msbuild task -->
 
-    <Target Name="AssetMan"
-            BeforeTargets="BeforeBuild">
+    <Target Name="AssetMan_GenerateAssets"
+            BeforeTargets="PrepareForBuild">
 
         <Message Text="AssetMan is exporting assets..." />
         <Message Text="AssetManCliBasePath: $(AssetManCliBasePath)"/>
@@ -17,6 +17,8 @@
                       AssetManCliPath="$(AssetManCliPath)">
             <Output TaskParameter="GeneratedAssets"
                     PropertyName="GeneratedAssets" />
+            <Output TaskParameter="SourceAssetFolders"
+                    PropertyName="SourceAssetFolders" />
         </ExportAssets>
 
         <Message Text="AssetMan exported assets." />
@@ -24,8 +26,8 @@
 
     <!-- 3. Include generated files in project -->
 
-    <Target Name="IncludeAndroidAssets"
-            AfterTargets="AssetMan"
+    <Target Name="AssetMan_IncludeAndroidAssets"
+            AfterTargets="AssetMan_GenerateAssets"
             Condition=" '$(TargetFrameworkIdentifier)' == 'MonoAndroid' OR '$(TargetFrameworkIdentifier)' == 'MonoDroid' ">
         <Message Text="Including Android resources $(GeneratedAssets)" />
 
@@ -36,8 +38,8 @@
         </ItemGroup>
     </Target>
 
-    <Target Name="IncludeiOSAssets"
-            AfterTargets="AssetMan"
+    <Target Name="AssetMan_IncludeiOSAssets"
+            AfterTargets="AssetMan_GenerateAssets"
             Condition=" '$(TargetFrameworkIdentifier)' == 'Xamarin.iOS' ">
         <Message Text="Including iOS resources $(GeneratedAssets)" />
 
@@ -48,8 +50,8 @@
         </ItemGroup>
     </Target>
 
-    <Target Name="IncludeUWPAssets"
-            AfterTargets="AssetMan"
+    <Target Name="AssetMan_IncludeUWPAssets"
+            AfterTargets="AssetMan_GenerateAssets"
             Condition=" '$(TargetPlatformIdentifier)' == 'UAP' ">
         <Message Text="Including UWP resources $(GeneratedAssets)" />
 
