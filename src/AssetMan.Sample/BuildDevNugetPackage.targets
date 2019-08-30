@@ -1,0 +1,11 @@
+<Project>
+
+    <Target Name="GenerateDevNugetPackage"
+        BeforeTargets="_GenerateRestoreProjectSpec"
+        Condition=" !Exists('$(MSBuildThisFileDirectory)../../AssetMan-0.0.0.nupkg') ">
+
+        <Exec Command="pwsh -NonInteractive -ExecutionPolicy Unrestricted -NoProfile -command &quot;&amp; { &amp;&apos;$(MSBuildThisFileDirectory)../../Rebuild-DevNugetPackage.ps1&apos; } &quot;" />
+
+    </Target>
+
+</Project>

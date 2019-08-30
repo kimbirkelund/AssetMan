@@ -1,6 +1,7 @@
 [CmdletBinding()]
 PARAM(
-    [string]$PackageVersion
+    [string]$PackageVersion,
+    [switch]$NoBuild
 )
 
 if (!$PackageVersion)
@@ -19,8 +20,11 @@ try
         "/p:BasePublishDir=$(Join-Path $pwd publish)";
 
     # Build msbuild task project
-    dotnet build `
-        .\src\AssetMan.Tasks\AssetMan.Tasks.csproj
+    if (!$NoBuild)
+    {
+        dotnet build `
+            .\src\AssetMan.Tasks\AssetMan.Tasks.csproj
+    }
 
     # Create nuget package
     dotnet pack `
