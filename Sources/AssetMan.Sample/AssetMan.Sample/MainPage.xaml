@@ -7,12 +7,31 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackLayout VerticalOptions="Center">
+    <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
 
-        <!--  Place new controls here  -->
-        <Label HorizontalOptions="Center" Text="Welcome to AssetMan!" />
+        <Label
+            HorizontalOptions="Center"
+            Text="Welcome to AssetMan!"
+            VerticalOptions="Center" />
 
-        <Image Source="logo" />
+        <Label
+            HorizontalOptions="Center"
+            Text="Auto included"
+            VerticalOptions="Center" />
+        <Image
+            HorizontalOptions="Center"
+            Source="logo.png"
+            VerticalOptions="Center" />
+
+        <Label
+            HorizontalOptions="Center"
+            Text="Manually included"
+            VerticalOptions="Center" />
+        <Image
+            HorizontalOptions="Center"
+            Source="logo_manual.png"
+            VerticalOptions="Center" /> 
+
     </StackLayout>
 
 </ContentPage>
