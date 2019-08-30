@@ -1,0 +1,5 @@
+﻿{
+  "Platform": "Android",
+  "Input": [ "../../AssetMan.Sample.Cli/Images/" ],
+  "Output": "Resources"
+}
