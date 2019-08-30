@@ -1,5 +1,12 @@
 [CmdletBinding()]
-PARAM()
+PARAM(
+    [string]$PackageVersion
+)
+
+if (!$PackageVersion)
+{
+    $PackageVersion = nbgv get-version -v NuGetPackageVersion;
+}
 
 $ErrorActionPreference = "Stop";
 
@@ -20,7 +27,7 @@ try
         .\src\AssetMan.Tasks\AssetMan.Tasks.csproj `
         --no-build --no-restore `
         --output $PWD `
-        "-p:PackageVersion=$(nbgv get-version -v NuGetPackageVersion)" `
+        "-p:PackageVersion=$PackageVersion" `
         "-p:PublishDir=$(Join-Path $PWD publish)";
 }
 finally
