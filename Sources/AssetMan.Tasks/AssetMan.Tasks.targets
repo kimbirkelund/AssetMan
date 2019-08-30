@@ -29,7 +29,7 @@
     <Target Name="AssetMan_IncludeAndroidAssets"
             AfterTargets="AssetMan_GenerateAssets"
             Condition=" '$(TargetFrameworkIdentifier)' == 'MonoAndroid' OR '$(TargetFrameworkIdentifier)' == 'MonoDroid' ">
-        <Message Text="Including Android resources $(GeneratedAssets)" />
+        <Message Text="Including Android resources: $(GeneratedAssets)" />
 
         <ItemGroup>
             <AndroidResource Include="$(GeneratedAssets)">
@@ -41,7 +41,7 @@
     <Target Name="AssetMan_IncludeiOSAssets"
             AfterTargets="AssetMan_GenerateAssets"
             Condition=" '$(TargetFrameworkIdentifier)' == 'Xamarin.iOS' ">
-        <Message Text="Including iOS resources $(GeneratedAssets)" />
+        <Message Text="Including iOS resources: $(GeneratedAssets)" />
 
         <ItemGroup>
             <ImageAsset Include="$(GeneratedAssets)">
@@ -53,7 +53,7 @@
     <Target Name="AssetMan_IncludeUWPAssets"
             AfterTargets="AssetMan_GenerateAssets"
             Condition=" '$(TargetPlatformIdentifier)' == 'UAP' ">
-        <Message Text="Including UWP resources $(GeneratedAssets)" />
+        <Message Text="Including UWP resources: $(GeneratedAssets)" />
 
         <ItemGroup>
             <Content Include="$(GeneratedAssets)">
