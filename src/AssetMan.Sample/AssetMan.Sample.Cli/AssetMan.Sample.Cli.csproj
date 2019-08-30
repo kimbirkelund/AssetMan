@@ -6,7 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AssetMan\AssetMan.csproj" />
+    <None Remove="All.assets.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\AssetMan\AssetMan.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />

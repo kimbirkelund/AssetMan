@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using AssetMan.Sample;
 using Foundation;
 using UIKit;
 
-namespace AssetMan.Sample.iOS
+namespace AssetMan.SampleUsingNuget.iOS
 {
     // The UIApplicationDelegate for the application. This class is responsible for launching the 
     // User Interface of the application, as well as listening (and optionally responding) to 

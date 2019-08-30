@@ -5,7 +5,7 @@ using System.Linq;
 using Foundation;
 using UIKit;
 
-namespace AssetMan.Sample.iOS
+namespace AssetMan.SampleUsingNuget.iOS
 {
     public class Application
     {

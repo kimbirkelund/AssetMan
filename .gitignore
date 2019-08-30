@@ -287,8 +287,7 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 
-Sources/AssetMan.Sample/AssetMan.Sample.Android/Resources/drawable-*/
-Sources/AssetMan.Sample/AssetMan.Sample.iOS/Assets.xcassets/
-Sources/AssetMan.Sample/AssetMan.Sample.UWP/logo.*.png
-
-Sources/AssetMan.Sample/AssetMan.Sample.Android/Resources/Resource.designer.cs
+src/AssetMan.Sample/AssetMan.Sample*.Android/Resources/Resource.designer.cs
+src/AssetMan.Sample/AssetMan.Sample*.Android/Resources/drawable-*/logo.png
+src/AssetMan.Sample/AssetMan.Sample*.iOS/Assets.xcassets/logo.imageset
+src/AssetMan.Sample/AssetMan.Sample*.UWP/logo.*.png

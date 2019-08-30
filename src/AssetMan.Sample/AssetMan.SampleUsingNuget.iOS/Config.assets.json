@@ -1,5 +1,5 @@
 ﻿{
   "Platform": "iOS",
-  "Input": [ "../../AssetMan.Sample.Cli/Images/" ],
+  "Input": [ "../AssetMan.Sample.Cli/Images/" ],
   "Output": "Assets.xcassets"
 }

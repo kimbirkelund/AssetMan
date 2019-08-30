@@ -7,15 +7,15 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="cec31966-9490-4155-921b-870e6e48984f"
-    Publisher="CN=272ba9a4-13e6-4422-8cef-1d797f0bc83a"
+    Name="c8ca5400-580b-4435-a18a-bcf5b3752ea0"
+    Publisher="CN=d1a49dde-938a-45b9-9173-9cbfccc131e8"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="ec0cc741-fd3e-485c-81be-68815c480690" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>AssetMan.Sample.UWP</DisplayName>
-    <PublisherDisplayName>272ba9a4-13e6-4422-8cef-1d797f0bc83a</PublisherDisplayName>
+    <DisplayName>AssetMan.SampleUsingNuget.UWP</DisplayName>
+    <PublisherDisplayName>d1a49dde-938a-45b9-9173-9cbfccc131e8</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -30,12 +30,12 @@
   <Applications>
     <Application Id="App"
       Executable="$targetnametoken$.exe"
-      EntryPoint="AssetMan.Sample.UWP.App">
+      EntryPoint="AssetMan.SampleUsingNuget.UWP.App">
       <uap:VisualElements
-        DisplayName="AssetMan.Sample.UWP"
+        DisplayName="AssetMan.SampleUsingNuget.UWP"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="AssetMan.Sample.UWP"
+        Description="AssetMan.SampleUsingNuget.UWP"
         BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square310x310Logo="Assets\LargeTile.png" Square71x71Logo="Assets\SmallTile.png">
           <uap:ShowNameOnTiles>
