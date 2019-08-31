@@ -1,17 +1,14 @@
-﻿using NUnit.Framework;
-using System;
+﻿using Xunit;
+
 namespace AssetMan.Test
 {
-	[TestFixture()]
-	public class AssetTest
-	{
-		[Test()]
-		public void Export()
-		{
-			using(var asset = new Asset("Images/ic_warning@3x.png"))
-			{
-				asset.Export("Images", 100, 100);
-			}
-		}
-	}
+    public class AssetTest
+    {
+        [Fact]
+        public void Export()
+        {
+            using (var asset = new Asset("../../../Images/logo@xxxhdpi.png"))
+                asset.Export("Images", 100, 100);
+        }
+    }
 }
