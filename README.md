@@ -1,4 +1,4 @@
-![Logo](logo/Logo.png)
+![Logo](logo/logo.png)
 
 [![nuget package](https://img.shields.io/nuget/v/AssetMan)](https://www.nuget.org/packages/AssetMan)
 
