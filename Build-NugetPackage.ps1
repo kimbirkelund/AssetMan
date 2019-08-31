@@ -1,7 +1,8 @@
 [CmdletBinding()]
 PARAM(
     [string]$PackageVersion,
-    [switch]$NoBuild
+    [switch]$NoBuild,
+    [string]$OutputDirectory = $PWD
 )
 
 if (!$PackageVersion)
@@ -17,7 +18,7 @@ try
     # Publish CLI tool
     msbuild /t:PublishAll `
         .\src\AssetMan.Cli\AssetMan.Cli.csproj `
-        "/p:BasePublishDir=$(Join-Path $pwd publish)";
+        "/p:BasePublishDir=$(Join-Path $PWD publish)";
 
     # Build msbuild task project
     if (!$NoBuild)
@@ -30,7 +31,7 @@ try
     dotnet pack `
         .\src\AssetMan.Tasks\AssetMan.Tasks.csproj `
         --no-build --no-restore `
-        --output $PWD `
+        --output $OutputDirectory `
         "-p:PackageVersion=$PackageVersion" `
         "-p:PublishDir=$(Join-Path $PWD publish)";
 }
