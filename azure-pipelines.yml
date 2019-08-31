@@ -47,7 +47,6 @@ steps:
     command: test
     arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Include="[AssetMan.*]*" /p:IncludeTestAssembly=true'
     projects: $(TestProjects)
-    nobuild: true
 
 # Generate the report using ReportGenerator (https://github.com/danielpalme/ReportGenerator)
 # First install the tool on the machine, then run it
