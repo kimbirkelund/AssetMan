@@ -167,7 +167,7 @@
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
 
   <PropertyGroup>
-    <AssetManBasePath>$(SolutionDir)/AssetMan.Cli/bin/$(Configuration)</AssetManBasePath>
+    <AssetManBasePath>$(MSBuildThisFileDirectory)/../../AssetMan.Cli/bin/$(Configuration)</AssetManBasePath>
   </PropertyGroup>
   <Import Project="..\..\AssetMan.Tasks\AssetMan.props" />
   <Import Project="..\..\AssetMan.Tasks\AssetMan.targets" />
