@@ -1,15 +1,21 @@
 ![Logo](logo/Logo.png)
 
-[![Build develop](https://img.shields.io/azure-devops/build/kimbirkelund/AssetMan/kimbirkelund.AssetMan/develop?label=build%20develop)](https://dev.azure.com/kimbirkelund/AssetMan/_build/latest?definitionId=10&branchName=develop)
-[![Build master](https://img.shields.io/azure-devops/build/kimbirkelund/AssetMan/kimbirkelund.AssetMan/master?label=build%20master)](https://dev.azure.com/kimbirkelund/AssetMan/_build/latest?definitionId=10&branchName=master)
 [![nuget package](https://img.shields.io/nuget/v/AssetMan)](https://www.nuget.org/packages/AssetMan)
+
+[![Build develop](https://img.shields.io/azure-devops/build/kimbirkelund/AssetMan/kimbirkelund.AssetMan/develop?label=build%20develop)](https://dev.azure.com/kimbirkelund/AssetMan/_build/latest?definitionId=10&branchName=develop)
+[![Test develop](https://img.shields.io/azure-devops/tests/kimbirkelund/AssetMan/10/develop?label=test%20develop)](https://dev.azure.com/kimbirkelund/AssetMan/_build/latest?definitionId=10&branchName=develop)
+[![Coverage develop](https://img.shields.io/azure-devops/coverage/kimbirkelund/AssetMan/10/develop?label=coverage%20develop)](https://dev.azure.com/kimbirkelund/AssetMan/_build/latest?definitionId=10&branchName=develop)
+
+[![Build master](https://img.shields.io/azure-devops/build/kimbirkelund/AssetMan/kimbirkelund.AssetMan/master?label=build%20master)](https://dev.azure.com/kimbirkelund/AssetMan/_build/latest?definitionId=10&branchName=master)
+[![Test master](https://img.shields.io/azure-devops/tests/kimbirkelund/AssetMan/10/master?label=test%20master)](https://dev.azure.com/kimbirkelund/AssetMan/_build/latest?definitionId=10&branchName=master)
+[![Coverage master](https://img.shields.io/azure-devops/coverage/kimbirkelund/AssetMan/10/master?label=coverage%20master)](https://dev.azure.com/kimbirkelund/AssetMan/_build/latest?definitionId=10&branchName=master)
 
 Resize UWP, Xamarin.Android and Xamarin.iOS assets automatically at build time.
 
 
 ## Installation and usage
 
-Available on [nuget](https://www.nuget.org/packages/Assetxport/). Simply install package into the platform projects.
+Available on [nuget](https://www.nuget.org/packages/AssetMan/). Simply install package into the platform projects.
 
 The easiest way is to use **AssetMan** from its build task. Simply add the package reference to your **Xamarin.iOS**, **Xamarin.Android** or **Universal Windows Platform** project and add a `Config.assets.json` configuration file at the root of your project.
 
