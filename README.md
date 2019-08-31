@@ -15,7 +15,9 @@ Resize UWP, Xamarin.Android and Xamarin.iOS assets automatically at build time.
 
 ## Installation and usage
 
-Available on [nuget](https://www.nuget.org/packages/AssetMan/). Simply install package into the platform projects.
+Available on [nuget.org](https://www.nuget.org/packages/AssetMan/). Simply install package into the platform projects.
+
+Prerelease versions are available [here](https://dev.azure.com/kimbirkelund/AssetMan/_packaging).
 
 The easiest way is to use **AssetMan** from its build task. Simply add the package reference to your **Xamarin.iOS**, **Xamarin.Android** or **Universal Windows Platform** project and add a `Config.assets.json` configuration file at the root of your project.
 
@@ -49,6 +51,8 @@ In your high definition asset source folder, all `.png`|`.jpg` images should hav
 * `<name>@xxxhdpi.<ext>` : **4.00**
 
 Then simply build the project to generate your various assets (*with densities lower or equal to the original density*) to the output folder!
+
+The generated files are automatically included in the project, so there is no need to do that manually. I'd also suggest setting up .gitignore to not include the generated files in source control. Currently files are not regenerated if they exist, even if the source asset is updated (this will be fixed).
 
 
 ## Platforms
