@@ -75,6 +75,14 @@ steps:
     publishVstsFeed: $(NugetFeed)
     versioningScheme: 'off'
 
+- task: NuGetCommand@2
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+    nuGetFeedType: 'external'
+    publishFeedCredentials: 'nuget - AssetMan* packages'
+
 - task: PublishSymbols@2
   inputs:
     SearchPattern: '**/bin/**/*.pdb'
