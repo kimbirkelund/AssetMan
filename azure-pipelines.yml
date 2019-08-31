@@ -16,7 +16,7 @@ variables:
   BuildConfiguration: Release
   TestProjects: src/**/*.Test.csproj
   ArtifactName: AssetMan
-  NugetFeed: AssetMan
+  NugetFeed: '2ce2cc65-9a9d-4f23-8e89-9c4dd0d17609/08272337-ad55-40a4-8a49-e8fa5ec50ad1' # AssetMan
   DotnetVersion: 2.2.401
   NugetVersion: '5.x'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
