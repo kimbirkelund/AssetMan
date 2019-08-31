@@ -45,7 +45,7 @@ steps:
   displayName: Test
   inputs:
     command: test
-    arguments: '--configuration $(BuildConfiguration) --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Include="[AssetMan.*]*" /p:IncludeTestAssembly=true'
+    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Include="[AssetMan.*]*" /p:IncludeTestAssembly=true'
     projects: $(TestProjects)
     nobuild: true
 
