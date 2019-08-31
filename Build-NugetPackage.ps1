@@ -17,10 +17,11 @@ Push-Location $PSScriptRoot;
 try
 {
     # Publish CLI tool
-    dotnet msbuild "/t:Restore,PublishAll" `
+    dotnet msbuild `
+    	"-t:Restore,PublishAll" `
         .\src\AssetMan.Cli\AssetMan.Cli.csproj `
-        "/p:Configuration=$Configuration"
-        "/p:BasePublishDir=$(Join-Path $PWD publish)";
+        "-p:Configuration=$Configuration" `
+        "-p:BasePublishDir=$(Join-Path $PWD publish)";
 
     # Build msbuild task project
     if (!$NoBuild)
