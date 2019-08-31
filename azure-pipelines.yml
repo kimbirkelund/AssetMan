@@ -35,7 +35,7 @@ steps:
 - script: nbgv cloud
   displayName: Set version in cloud environment
 
-- pwsh: ./Build-NugetPackage.ps1
+- pwsh: ./Build-NugetPackage.ps1 -Configuration $(BuildConfiguration)
   displayName: Pack nuget packages
 
 - task: MSBuild@1
