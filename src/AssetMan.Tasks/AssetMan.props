@@ -13,8 +13,8 @@
         <TaskAssembly Condition=" '$(MSBuildRuntimeType)' == 'Core'">$(AssetManBasePath)/netstandard2.0/AssetMan.Tasks.dll</TaskAssembly>
         <TaskAssembly Condition=" '$(MSBuildRuntimeType)' != 'Core'">$(AssetManBasePath)/net461/AssetMan.Tasks.dll</TaskAssembly>
 
-        <TaskAssembly Condition=" '$(MSBuildRuntimeType)' == 'Core' AND !Exists('$(TaskAssembly)') ">./bin/Debug/netstandard2.0/AssetMan.Tasks.dll</TaskAssembly>
-        <TaskAssembly Condition=" '$(MSBuildRuntimeType)' != 'Core' AND !Exists('$(TaskAssembly)') ">./bin/Debug/net461/AssetMan.Tasks.dll</TaskAssembly>
+        <TaskAssembly Condition=" '$(MSBuildRuntimeType)' == 'Core' AND !Exists('$(TaskAssembly)') ">./bin/$(Configuration)/netstandard2.0/AssetMan.Tasks.dll</TaskAssembly>
+        <TaskAssembly Condition=" '$(MSBuildRuntimeType)' != 'Core' AND !Exists('$(TaskAssembly)') ">./bin/$(Configuration)/net461/AssetMan.Tasks.dll</TaskAssembly>
     </PropertyGroup>
 
     <UsingTask TaskName="ExportAssets"
