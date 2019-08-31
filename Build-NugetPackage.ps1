@@ -16,7 +16,7 @@ Push-Location $PSScriptRoot;
 try
 {
     # Publish CLI tool
-    msbuild /t:PublishAll `
+    msbuild "/t:Restore,PublishAll" `
         .\src\AssetMan.Cli\AssetMan.Cli.csproj `
         "/p:BasePublishDir=$(Join-Path $PWD publish)";
 
