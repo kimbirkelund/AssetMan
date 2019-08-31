@@ -1,22 +1,15 @@
-![Logo](Documentation/Logo.png)
+![Logo](logo/Logo.png)
+
+[![Build develop](https://img.shields.io/azure-devops/build/kimbirkelund/AssetMan/kimbirkelund.AssetMan/develop?label=build%20develop)](https://dev.azure.com/kimbirkelund/AssetMan/_build/latest?definitionId=10&branchName=develop)
+[![Build master](https://img.shields.io/azure-devops/build/kimbirkelund/AssetMan/kimbirkelund.AssetMan/master?label=build%20master)](https://dev.azure.com/kimbirkelund/AssetMan/_build/latest?definitionId=10&branchName=master)
+[![nuget package](https://img.shields.io/nuget/v/AssetMan)](https://www.nuget.org/packages/AssetMan)
 
 Resize UWP, Xamarin.Android and Xamarin.iOS assets automatically at build time.
 
-This is, initially, a rebranding of [Assetxport](https://github.com/dotnet-ad/Assetxport), released under MIT, with the intention of supporting and furthering the project.
 
+## Installation and usage
 
-## Install
-
-Currently not available.
-
-<!--
- Available on NuGet
-
-[![NuGet](https://img.shields.io/nuget/v/Assetxport.svg?label=NuGet)](https://www.nuget.org/packages/Assetxport/)
--->
-
-
-## Usage
+Available on [nuget](https://www.nuget.org/packages/Assetxport/). Simply install package into the platform projects.
 
 The easiest way is to use **AssetMan** from its build task. Simply add the package reference to your **Xamarin.iOS**, **Xamarin.Android** or **Universal Windows Platform** project and add a `Config.assets.json` configuration file at the root of your project.
 
@@ -51,6 +44,7 @@ In your high definition asset source folder, all `.png`|`.jpg` images should hav
 
 Then simply build the project to generate your various assets (*with densities lower or equal to the original density*) to the output folder!
 
+
 ## Platforms
 
 ### iOS
@@ -65,16 +59,24 @@ Assets are generated inside qualified drawable sub folders (`drawable-hdpi`, `dr
 
 Assets are generated with a qualified suffix indicating the scale (`scale-100`, `scale-240`, ...).
 
-## Cli
+
+## CLI
 
 The standalone `.exe` CLI used by the build task is available from the `/tools` folder of the NuGet package.
+
 
 ## Under the hood
 
 The tool uses [SkiaSharp](https://github.com/mono/SkiaSharp) to resize all images.
+
 
 ## Contributions
 
 Contributions are welcome! If you find a bug please report it and if you want a feature please report it.
 
 If you want to contribute code please file an issue and create a branch off of the current dev branch and file a pull request.
+
+
+## Attributions
+
+This is, initially, a rebranding of [Assetxport](https://github.com/dotnet-ad/Assetxport), released under MIT, with the intention of supporting and furthering the project.
