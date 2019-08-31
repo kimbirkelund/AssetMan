@@ -15,9 +15,6 @@ pool:
 variables:
   BuildConfiguration: Release
   TestProjects: src/**/*.Test.csproj
-  UwpSampleProjects: src/AssetMan.Sample/*/*.UWP.csproj
-  AndroidSampleProjects: src/AssetMan.Sample/*/*.Android.csproj
-  iOSSampleProjects: src/AssetMan.Sample/*/*.iOS.csproj
   ArtifactName: AssetMan
   NugetFeed: AssetMan
   DotnetVersion: 2.2.401
@@ -42,26 +39,6 @@ steps:
         -Configuration $(BuildConfiguration) `
         -OutputDirectory '$(Build.ArtifactStagingDirectory)'
   displayName: Pack nuget packages
-
-- task: MSBuild@1
-  displayName: Build UWP sample projects
-  inputs:
-      solution: $(UwpSampleProjects)
-      configuration: $(BuildConfiguration)
-      msbuildArguments: '/t:Restore,Build'
-
-- task: XamarinAndroid@1
-  displayName: Build Android sample projects
-  inputs:
-    configuration: $(BuildConfiguration)
-    projectFile: $(AndroidSampleProjects)
-
-- task: XamariniOS@2
-  displayName: Build iOS sample projects
-  inputs:
-    configuration: $(BuildConfiguration)
-    buildForSimulator: true
-    solutionFile: $(iOSSampleProjects)
 
 # Run all tests with "/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura" to generate the code coverage file
 - task: DotNetCoreCLI@2
