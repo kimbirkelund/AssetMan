@@ -8,7 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{DBB4
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetMan.Cli", "AssetMan.Cli\AssetMan.Cli.csproj", "{6B0E6759-4C7B-4E22-8952-17931DB86300}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetMan.Tests", "AssetMan.Tests\AssetMan.Tests.csproj", "{E566C72A-1A4C-4884-A444-49E6D5A1AF60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetMan.Test", "AssetMan.Test\AssetMan.Test.csproj", "{E566C72A-1A4C-4884-A444-49E6D5A1AF60}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetMan.Sample.UWP", "AssetMan.Sample\AssetMan.Sample.UWP\AssetMan.Sample.UWP.csproj", "{D49AE650-782F-47CC-BC76-13A38D21A69C}"
 EndProject

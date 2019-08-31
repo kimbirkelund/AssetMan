@@ -1,8 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <AssetManBasePath>$(SolutionDir)/AssetMan.Cli/bin/Debug</AssetManBasePath>
-  </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -168,6 +165,10 @@
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+
+  <PropertyGroup>
+    <AssetManBasePath>$(MSBuildThisFileDirectory)/../../AssetMan.Cli/bin/$(Configuration)</AssetManBasePath>
+  </PropertyGroup>
   <Import Project="..\..\AssetMan.Tasks\AssetMan.props" />
   <Import Project="..\..\AssetMan.Tasks\AssetMan.targets" />
 </Project>

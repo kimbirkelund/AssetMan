@@ -9,7 +9,7 @@
             BeforeTargets="PrepareForBuild">
 
         <Message Text="AssetMan is exporting assets..." />
-        <Message Text="AssetManCliBasePath: $(AssetManCliBasePath)"/>
+        <Message Text="AssetManBasePath: $(AssetManBasePath)"/>
         <Message Text="AssetManCliPath: $(AssetManCliPath)"/>
         <Message Text="TargetFrameworkIdentifier: $(TargetFrameworkIdentifier)"/>
 

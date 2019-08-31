@@ -1,7 +1,9 @@
 [CmdletBinding()]
 PARAM(
     [string]$PackageVersion,
-    [switch]$NoBuild
+    [switch]$NoBuild,
+    [string]$OutputDirectory = $PWD,
+    [string]$Configuration = "Debug"
 )
 
 if (!$PackageVersion)
@@ -15,22 +17,26 @@ Push-Location $PSScriptRoot;
 try
 {
     # Publish CLI tool
-    msbuild /t:PublishAll `
+    dotnet msbuild `
+    	"-t:Restore,PublishAll" `
         .\src\AssetMan.Cli\AssetMan.Cli.csproj `
-        "/p:BasePublishDir=$(Join-Path $pwd publish)";
+        "-p:Configuration=$Configuration" `
+        "-p:BasePublishDir=$(Join-Path $PWD publish)";
 
     # Build msbuild task project
     if (!$NoBuild)
     {
         dotnet build `
-            .\src\AssetMan.Tasks\AssetMan.Tasks.csproj
+            .\src\AssetMan.Tasks\AssetMan.Tasks.csproj `
+            --configuration $Configuration
     }
 
     # Create nuget package
     dotnet pack `
         .\src\AssetMan.Tasks\AssetMan.Tasks.csproj `
+        --configuration $Configuration `
         --no-build --no-restore `
-        --output $PWD `
+        --output $OutputDirectory `
         "-p:PackageVersion=$PackageVersion" `
         "-p:PublishDir=$(Join-Path $PWD publish)";
 }
