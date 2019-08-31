@@ -10,7 +10,7 @@ pr:
       - '*'
 
 pool:
-  vmImage: macOS-latest
+  vmImage: windows-latest
 
 variables:
   BuildConfiguration: Release
