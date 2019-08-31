@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <AssetManBasePath>$(SolutionDir)/AssetMan.Cli/bin/Debug</AssetManBasePath>
-  </PropertyGroup>
-  <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{00F67929-5D84-4964-A8CE-C06EFA3C20C9}</ProjectGuid>
@@ -117,6 +114,10 @@
     <AndroidResource Include="Resources\drawable-xxxhdpi\logo_manual.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
+
+  <PropertyGroup>
+    <AssetManBasePath>$(SolutionDir)/AssetMan.Cli/bin/$(Configuration)</AssetManBasePath>
+  </PropertyGroup>
   <Import Project="..\..\AssetMan.Tasks\AssetMan.props" />
   <Import Project="..\..\AssetMan.Tasks\AssetMan.targets" />
 </Project>
