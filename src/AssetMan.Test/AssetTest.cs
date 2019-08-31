@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
-namespace AssetMan.Tests
+namespace AssetMan.Test
 {
 	[TestFixture()]
 	public class AssetTest
