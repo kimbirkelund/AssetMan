@@ -4,7 +4,10 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Root"
+    AutomationId="MainPage"
     mc:Ignorable="d">
 
     <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
@@ -18,19 +21,29 @@
             HorizontalOptions="Center"
             Text="Auto included"
             VerticalOptions="Center" />
-        <Image
+        <ff:CachedImage
+            x:Name="AutoIncludedLogo"
+            AutomationId="AutoIncludedLogo"
+            Error="AutoIncludedLogo_OnError"
             HorizontalOptions="Center"
             Source="logo.png"
+            Success="AutoIncludedLogo_OnSuccess"
             VerticalOptions="Center" />
+        <Label AutomationId="AutoIncludedLogoLoadedSuccessfully" Text="{Binding AutoIncludedLogoLoadedSuccessfully, Source={x:Reference Root}}" />
 
         <Label
+            AutomationId="ManuallyIncludedLogo"
             HorizontalOptions="Center"
             Text="Manually included"
             VerticalOptions="Center" />
-        <Image
+        <ff:CachedImage
+            x:Name="ManuallyIncludedLogo"
+            Error="ManuallyIncludedLogo_OnError"
             HorizontalOptions="Center"
             Source="logo_manual.png"
-            VerticalOptions="Center" /> 
+            Success="ManuallyIncludedLogo_OnSuccess"
+            VerticalOptions="Center" />
+        <Label AutomationId="ManuallyIncludedLogoLoadedSuccessfully" Text="{Binding ManuallyIncludedLogoLoadedSuccessfully, Source={x:Reference Root}}" />
 
     </StackLayout>
 

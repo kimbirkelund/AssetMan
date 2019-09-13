@@ -2,6 +2,7 @@
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
+using FFImageLoading.Forms.Platform;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using Platform = Xamarin.Essentials.Platform;
@@ -23,7 +24,7 @@ namespace AssetMan.Sample.Droid
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
-        { 
+        {
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
@@ -31,6 +32,8 @@ namespace AssetMan.Sample.Droid
 
             Platform.Init(this, savedInstanceState);
             Forms.Init(this, savedInstanceState);
+            CachedImageRenderer.Init(true);
+
             LoadApplication(new App());
         }
     }
