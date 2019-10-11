@@ -4,11 +4,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace AssetMan.Tasks
 {
+    [UsedImplicitly]
     public class ExportAssets : ToolTask
     {
         private static readonly Regex _outputRegex = new Regex(@"^AssetManGeneratedFile\((?<AssetManGeneratedFile>.+)\)|AssetManSourceFolder\((?<AssetManSourceFolder>.+)\)$",
