@@ -59,7 +59,7 @@
 
 		public void Export(string path, int width, int height)
 		{
-			if(!File.Exists(path))
+			if (!File.Exists(path) || File.GetLastWriteTime(path) < File.GetLastWriteTime(Path))
 			{
 				Log.Write($"[{this.Path} ({this.bitmap.Width}x{this.bitmap.Height})({this.Density}x)] -> Generating [{path} ({width}x{height})]");
 
