@@ -1,8 +1,8 @@
-﻿namespace AssetMan
-{
-	using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-	public class AndroidPlatform : DensitySetPlatform
+namespace AssetMan.Platforms
+{
+    public class AndroidPlatform : DensitySetPlatform
 	{
 		private static readonly Dictionary<string, double> AndroidDensities = new Dictionary<string, double>
 		{

@@ -1,4 +1,7 @@
-﻿namespace AssetMan
+﻿using AssetMan.Assets;
+using AssetMan.Platforms;
+
+namespace AssetMan
 {
 	using System;
 	using System.Collections.Generic;

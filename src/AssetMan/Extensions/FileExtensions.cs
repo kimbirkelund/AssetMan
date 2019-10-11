@@ -1,8 +1,8 @@
-﻿namespace AssetMan
-{
-	using System.IO;
+﻿using System.IO;
 
-	public static class FileExtensions
+namespace AssetMan.Extensions
+{
+    public static class FileExtensions
 	{
 		public static void CreateParentDirectory(this string path)
 		{

@@ -1,9 +1,9 @@
-﻿namespace AssetMan
-{
-	using System.Collections.Generic;
-	using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
-	public static class Densities
+namespace AssetMan.Assets
+{
+    public static class Densities
 	{
 		public static readonly Regex ExplicitNaming = new Regex(@"\@([0-9]+(.[0-9]+)?)x\.[a-zA-Z]+$");
 

@@ -1,10 +1,12 @@
-﻿namespace AssetMan
-{
-	using System.Collections.Generic;
-	using System.IO;
-	using System.Linq;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using AssetMan.Assets;
+using AssetMan.Extensions;
 
-	public class iOSPlatform : DensitySetPlatform
+namespace AssetMan.Platforms
+{
+    public class iOSPlatform : DensitySetPlatform
 	{
 		private static readonly Dictionary<string, double> iOSDensities = new Dictionary<string, double>
 		{

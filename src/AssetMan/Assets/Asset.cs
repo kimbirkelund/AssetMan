@@ -1,27 +1,34 @@
-namespace AssetMan
+﻿using System;
+using System.IO;
+using AssetMan.Extensions;
+using SkiaSharp;
+
+namespace AssetMan.Assets
 {
-	using System;
-	using System.IO;
-	using SkiaSharp;
+    public class Asset : IAsset
+    {
+        private readonly SKBitmap bitmap;
 
-	public class Asset : IAsset
-	{
-		#region Constructors
+        public double Density { get; set; } = 1.0;
 
-		public Asset(string path)
-		{
-			this.Path = path;
-			this.Path.WithoutQualifier(out string name, out string extension);
-			this.FilenameWithoutQualifierAndExtension = name;
-			this.Extension = extension;
+        public string Extension { get; }
 
-			if(Densities.TryFind(path, out double foundDensity))
-			{
-				this.Density = foundDensity;
-			}
+        public string FilenameWithoutQualifierAndExtension { get; }
 
-			using (var input = File.Open(path, FileMode.Open))
-            using(var memory = new MemoryStream())
+        public string Path { get; }
+
+        public Asset(string path)
+        {
+            Path = path;
+            Path.WithoutQualifier(out var name, out var extension);
+            FilenameWithoutQualifierAndExtension = name;
+            Extension = extension;
+
+            if (Densities.TryFind(path, out var foundDensity))
+                Density = foundDensity;
+
+            using (var input = File.Open(path, FileMode.Open))
+            using (var memory = new MemoryStream())
             {
                 input.CopyTo(memory);
                 memory.Seek(0, SeekOrigin.Begin);
@@ -29,46 +36,29 @@ namespace AssetMan
 
                 using (var stream = new SKManagedStream(memory))
                 {
-                    this.bitmap = SKBitmap.Decode(stream);
+                    bitmap = SKBitmap.Decode(stream);
 
-                    if (this.bitmap == null)
+                    if (bitmap == null)
                         throw new InvalidOperationException($"The provided image isn't valid : {path} (SKBitmap can't be created).");
-                } 
+                }
             }
-		}
+        }
 
-		#endregion
+        public void Dispose()
+        {
+            bitmap.Dispose();
+        }
 
-		#region Fields
-
-		private SKBitmap bitmap;
-
-		#endregion
-
-		#region Properties
-
-		public string Path { get; }
-
-		public string FilenameWithoutQualifierAndExtension { get; }
-
-		public string Extension { get; }
-
-		public double Density { get; set; } = 1.0;
-
-		#endregion
-
-		public void Export(string path, int width, int height)
-		{
-			if (!File.Exists(path) || File.GetLastWriteTime(path) < File.GetLastWriteTime(Path))
-			{
-				Log.Write($"[{this.Path} ({this.bitmap.Width}x{this.bitmap.Height})({this.Density}x)] -> Generating [{path} ({width}x{height})]");
+        public void Export(string path, int width, int height)
+        {
+            if (!File.Exists(path) || File.GetLastWriteTime(path) < File.GetLastWriteTime(Path))
+            {
+                Log.Write($"[{Path} ({bitmap.Width}x{bitmap.Height})({Density}x)] -> Generating [{path} ({width}x{height})]");
 
                 // SKBitmap.Resize() doesn't support SKColorType.Index8
                 // https://github.com/mono/SkiaSharp/issues/331
-                if(bitmap.ColorType != SKImageInfo.PlatformColorType)
-                {
+                if (bitmap.ColorType != SKImageInfo.PlatformColorType)
                     bitmap.CopyTo(bitmap, SKImageInfo.PlatformColorType);
-                }
 
                 var info = new SKImageInfo(width, height);
 
@@ -87,32 +77,22 @@ namespace AssetMan
 
                         using (var fileStream = File.Create(path))
                         using (var outputStream = data.AsStream())
-                        {
                             outputStream.CopyTo(fileStream);
-                        }
                     }
                 }
-			}
-			else
-			{
-				Log.Write($"[{this.Path} ({this.bitmap.Width}x{this.bitmap.Height})({this.Density}x)] -> Didn't generate [{path} ({width}x{height})] because it already exists.");
-
-			}
+            }
+            else
+                Log.Write($"[{Path} ({bitmap.Width}x{bitmap.Height})({Density}x)] -> Didn't generate [{path} ({width}x{height})] because it already exists.");
 
             Log.Write($"AssetManGeneratedFile({path})");
         }
 
-		public void Export(string path, double density)
-		{
-			var densityFactor = (density / this.Density);
-			var width = (int)Math.Ceiling(this.bitmap.Width * densityFactor);
-			var height = (int)Math.Ceiling(this.bitmap.Height * densityFactor);
-			this.Export(path, width, height);
-		}
-
-		public void Dispose()
-		{
-			this.bitmap.Dispose();
-		}
-	}
+        public void Export(string path, double density)
+        {
+            var densityFactor = density / Density;
+            var width = (int)Math.Ceiling(bitmap.Width * densityFactor);
+            var height = (int)Math.Ceiling(bitmap.Height * densityFactor);
+            Export(path, width, height);
+        }
+    }
 }

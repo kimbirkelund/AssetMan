@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IO;
+using AssetMan.Assets;
 using FluentAssertions;
 using SkiaSharp;
 using Xunit;
 
-namespace AssetMan.Test
+namespace AssetMan.Test.Assets
 {
     public class AssetTest
     {

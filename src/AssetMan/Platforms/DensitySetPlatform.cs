@@ -1,10 +1,10 @@
-﻿using System.Linq;
-namespace AssetMan
-{
-	using System;
-	using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
+using AssetMan.Assets;
 
-	public abstract class DensitySetPlatform : IPlatform
+namespace AssetMan.Platforms
+{
+    public abstract class DensitySetPlatform : IPlatform
 	{
 		#region Properties
 

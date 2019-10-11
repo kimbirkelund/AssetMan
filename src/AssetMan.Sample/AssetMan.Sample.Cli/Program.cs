@@ -1,4 +1,6 @@
-﻿namespace AssetMan.Sample.Cli
+﻿using AssetMan.Assets;
+
+namespace AssetMan.Sample.Cli
 {
 	using System.IO;
 	using System.Reflection;

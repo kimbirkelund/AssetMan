@@ -1,4 +1,6 @@
-﻿namespace AssetMan
+﻿using AssetMan.Assets;
+
+namespace AssetMan.Platforms
 {
 	public interface IPlatform
 	{

@@ -1,8 +1,8 @@
-﻿namespace AssetMan
-{
-	using System;
+﻿using System;
 
-	public interface IAsset : IDisposable
+namespace AssetMan.Assets
+{
+    public interface IAsset : IDisposable
 	{
 		string Path { get; }
 

@@ -1,9 +1,8 @@
-﻿namespace AssetMan
-{
-	using System;
-	using System.Linq;
+﻿using System.Linq;
 
-	public static class QualifierExtensions
+namespace AssetMan.Extensions
+{
+    public static class QualifierExtensions
 	{
 		public static void WithoutQualifier(this string path, out string name, out string extension)
 		{
