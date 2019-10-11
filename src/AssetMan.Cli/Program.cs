@@ -56,21 +56,15 @@ namespace AssetMan.Cli
                                          .Select(x => x.Trim()))
                 {
                     var options = Options.Load(file);
-                    var parent = Path.GetDirectoryName(file);
-                    options.Output = Path.Combine(parent, options.Output);
-                    options.Input = options.Input.Select(x => Path.Combine(parent, x))
-                                           .ToArray();
                     result.Add(options);
                 }
             }
 
             if (!string.IsNullOrEmpty(args.Input) && !string.IsNullOrEmpty(args.Output) && !string.IsNullOrEmpty(args.Platform))
             {
-                var options = new Options();
-                options.Input = options.Input.Concat(new[] { args.Input })
-                                       .ToArray();
-                options.Output = args.Output;
-                options.Platform = args.Platform;
+                var options = new Options(args.Platform,
+                                          args.Output,
+                                          new[] { args.Input });
                 result.Add(options);
             }
 

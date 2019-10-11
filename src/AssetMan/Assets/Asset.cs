@@ -1,28 +1,25 @@
 ﻿using System;
 using System.IO;
 using AssetMan.Extensions;
+using JetBrains.Annotations;
 using SkiaSharp;
 
 namespace AssetMan.Assets
 {
     public class Asset : IAsset
     {
-        private readonly SKBitmap bitmap;
+        private readonly SKBitmap _bitmap;
 
-        public double Density { get; set; } = 1.0;
-
+        public double Density { get; } = 1.0;
         public string Extension { get; }
-
         public string FilenameWithoutQualifierAndExtension { get; }
-
         public string Path { get; }
 
-        public Asset(string path)
+        public Asset([NotNull] string path)
         {
-            Path = path;
-            Path.WithoutQualifier(out var name, out var extension);
-            FilenameWithoutQualifierAndExtension = name;
-            Extension = extension;
+            Path = path ?? throw new ArgumentNullException(nameof(path));
+
+            (FilenameWithoutQualifierAndExtension, Extension) = Path.WithoutQualifier();
 
             if (Densities.TryFind(path, out var foundDensity))
                 Density = foundDensity;
@@ -36,36 +33,36 @@ namespace AssetMan.Assets
 
                 using (var stream = new SKManagedStream(memory))
                 {
-                    bitmap = SKBitmap.Decode(stream);
+                    _bitmap = SKBitmap.Decode(stream);
 
-                    if (bitmap == null)
-                        throw new InvalidOperationException($"The provided image isn't valid : {path} (SKBitmap can't be created).");
+                    if (_bitmap == null)
+                        throw new InvalidOperationException($"The provided image isn't valid: {path} (SKBitmap can't be created).");
                 }
             }
         }
 
         public void Dispose()
         {
-            bitmap.Dispose();
+            _bitmap.Dispose();
         }
 
         public void Export(string path, int width, int height)
         {
-            if (!File.Exists(path) || File.GetLastWriteTime(path) < File.GetLastWriteTime(Path))
+            if (File.Exists(path) && File.GetLastWriteTime(path) >= File.GetLastWriteTime(Path))
+                Log.Write($"[{Path} ({_bitmap.Width}x{_bitmap.Height})({Density}x)] -> Didn't generate [{path} ({width}x{height})] because it already exists and hasn't been updated.");
+            else
             {
-                Log.Write($"[{Path} ({bitmap.Width}x{bitmap.Height})({Density}x)] -> Generating [{path} ({width}x{height})]");
+                Log.Write($"[{Path} ({_bitmap.Width}x{_bitmap.Height})({Density}x)] -> Generating [{path} ({width}x{height})].");
 
-                // SKBitmap.Resize() doesn't support SKColorType.Index8
-                // https://github.com/mono/SkiaSharp/issues/331
-                if (bitmap.ColorType != SKImageInfo.PlatformColorType)
-                    bitmap.CopyTo(bitmap, SKImageInfo.PlatformColorType);
+                if (_bitmap.ColorType != SKImageInfo.PlatformColorType)
+                    _bitmap.CopyTo(_bitmap, SKImageInfo.PlatformColorType);
 
                 var info = new SKImageInfo(width, height);
 
-                using (var resized = bitmap.Resize(info, SKFilterQuality.High))
+                using (var resized = _bitmap.Resize(info, SKFilterQuality.High))
                 {
                     if (resized == null)
-                        throw new InvalidOperationException($"Failed to resize : {Path}.");
+                        throw new InvalidOperationException($"Failed to resize: {Path}.");
 
                     using (var image = SKImage.FromBitmap(resized))
                     using (var data = image.Encode())
@@ -81,8 +78,6 @@ namespace AssetMan.Assets
                     }
                 }
             }
-            else
-                Log.Write($"[{Path} ({bitmap.Width}x{bitmap.Height})({Density}x)] -> Didn't generate [{path} ({width}x{height})] because it already exists.");
 
             Log.Write($"AssetManGeneratedFile({path})");
         }
@@ -90,8 +85,9 @@ namespace AssetMan.Assets
         public void Export(string path, double density)
         {
             var densityFactor = density / Density;
-            var width = (int)Math.Ceiling(bitmap.Width * densityFactor);
-            var height = (int)Math.Ceiling(bitmap.Height * densityFactor);
+            var width = (int)Math.Ceiling(_bitmap.Width * densityFactor);
+            var height = (int)Math.Ceiling(_bitmap.Height * densityFactor);
+
             Export(path, width, height);
         }
     }

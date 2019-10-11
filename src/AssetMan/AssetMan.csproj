@@ -11,7 +11,6 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <Folder Include="Platforms\" />
     <Folder Include="Assets\" />
     <Folder Include="Extensions\" />
   </ItemGroup>

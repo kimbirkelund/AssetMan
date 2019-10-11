@@ -1,36 +1,35 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using AssetMan.Assets;
 
 namespace AssetMan.Platforms
 {
     public abstract class DensitySetPlatform : IPlatform
-	{
-		#region Properties
+    {
+        public IReadOnlyDictionary<string, double> Densities { get; }
 
-		public string Name { get; }
+        public string Name { get; }
 
-		public Dictionary<string, double> Densities { get; }
+        protected DensitySetPlatform(string name, IReadOnlyDictionary<string, double> densities)
+        {
+            Name = name;
+            Densities = densities;
+        }
 
-		#endregion
+        public virtual void Export(IAsset asset, string folder)
+        {
+            foreach (var density in Densities.Where(x => x.Value <= asset.Density))
+            {
+                Log.Write($"Density '{density.Key}' = {density.Value}x");
 
-		public DensitySetPlatform(string name, Dictionary<string, double> densities)
-		{
-			this.Name = name;
-			this.Densities = densities;
-		}
+                var assetPath = GetAssetPath(asset.FilenameWithoutQualifierAndExtension, asset.Extension, density.Key, density.Value);
+                var path = Path.Combine(folder, assetPath);
 
-		public virtual void Export(IAsset asset, string folder)
-		{
-			foreach (var density in this.Densities.Where(x => x.Value <= asset.Density))
-			{
-				Log.Write($"Density '{density.Key}' = {density.Value}x");
-				var assetPath = this.GetAssetPath(asset.FilenameWithoutQualifierAndExtension, asset.Extension, density.Key, density.Value);
-				var path = System.IO.Path.Combine(folder, assetPath);
-				asset.Export(path, density.Value);
-			}
-		}
+                asset.Export(path, density.Value);
+            }
+        }
 
-		protected abstract string GetAssetPath(string name, string extension, string qualifier, double density);
-	}
+        protected abstract string GetAssetPath(string name, string extension, string qualifier, double density);
+    }
 }

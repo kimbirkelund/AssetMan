@@ -2,10 +2,10 @@
 
 namespace AssetMan.Platforms
 {
-	public interface IPlatform
-	{
-		string Name { get; }
+    public interface IPlatform
+    {
+        string Name { get; }
 
-		void Export(IAsset asset, string folder);
-	}
+        void Export(IAsset asset, string folder);
+    }
 }

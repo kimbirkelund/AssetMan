@@ -3,18 +3,13 @@
 namespace AssetMan.Assets
 {
     public interface IAsset : IDisposable
-	{
-		string Path { get; }
+    {
+        double Density { get; }
+        string Extension { get; }
+        string FilenameWithoutQualifierAndExtension { get; }
+        string Path { get; }
 
-		string FilenameWithoutQualifierAndExtension { get; }
-
-		string Extension { get; }
-
-		double Density { get; set; }
-
-		void Export(string path, double density);
-
-		void Export(string path, int width, int height);
-
-	}
-}    
+        void Export(string path, double density);
+        void Export(string path, int width, int height);
+    }
+}

@@ -1,47 +1,47 @@
-﻿using AssetMan.Assets;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using AssetMan.Assets;
 using AssetMan.Platforms;
 
 namespace AssetMan
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.IO;
+    public class Exporter
+    {
+        private readonly List<IPlatform> _platforms = new List<IPlatform>();
 
-	public class Exporter
-	{
-		public Exporter()
-		{
-			this.Register(new iOSPlatform());
-			this.Register(new AndroidPlatform());
-			this.Register(new UwpPlatform());
-		}
+        public string[] SupportedExtensions { get; set; } = { ".png", ".jpg" };
 
-		private List<IPlatform> platforms = new List<IPlatform>();
+        public Exporter()
+        {
+            Register(new IosPlatform());
+            Register(new AndroidPlatform());
+            Register(new UwpPlatform());
+        }
 
-		public string[] SupportedExtensions { get; set; } = new[] { ".png", ".jpg" };
+        public void Export(Options configuration)
+        {
+            var platform = _platforms.FirstOrDefault(x => x.Name == configuration.Platform);
 
-		public Exporter Register(IPlatform platform)
-		{
-			this.platforms.Add(platform);
-			return this;
-		}
+            if (platform == null)
+                throw new NullReferenceException("Platform not found");
 
-		public void Export(Options configuration)
-		{
-			var platform = this.platforms.FirstOrDefault(x => x.Name == configuration.Platform);
+            var assetPaths = configuration.Input
+                                          .SelectMany(Directory.GetFiles)
+                                          .Where(x => SupportedExtensions.Contains(Path.GetExtension(x.ToLower())));
 
-			if (platform == null)
-				throw new NullReferenceException("Platform not found");
+            foreach (var path in assetPaths)
+            {
+                using (var asset = new Asset(path))
+                    platform.Export(asset, configuration.Output);
+            }
+        }
 
-			var assetPaths = configuration.Input.SelectMany(x => Directory.GetFiles(x)).Where(x => SupportedExtensions.Contains(Path.GetExtension(x.ToLower())));
-			foreach (var path in assetPaths)
-			{
-				using (var asset = new Asset(path))
-				{
-					platform.Export(asset, configuration.Output);
-				}
-			}
-		}
-	}
+        public Exporter Register(IPlatform platform)
+        {
+            _platforms.Add(platform);
+            return this;
+        }
+    }
 }
