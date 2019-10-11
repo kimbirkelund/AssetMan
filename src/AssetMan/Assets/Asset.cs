@@ -1,4 +1,4 @@
-﻿namespace AssetMan
+namespace AssetMan
 {
 	using System;
 	using System.IO;
@@ -72,7 +72,7 @@
 
                 var info = new SKImageInfo(width, height);
 
-				using (var resized = bitmap.Resize(info, SKBitmapResizeMethod.Lanczos3))
+                using (var resized = bitmap.Resize(info, SKFilterQuality.High))
                 {
                     if (resized == null)
                         throw new InvalidOperationException($"Failed to resize : {Path}.");
