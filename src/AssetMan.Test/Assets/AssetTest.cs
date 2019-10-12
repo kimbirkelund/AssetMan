@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using AssetMan.Assets;
 using FluentAssertions;
 using SkiaSharp;
@@ -24,7 +25,7 @@ namespace AssetMan.Test.Assets
         }
 
         [Fact]
-        public void Export_ShouldReplaceOlderFiles()
+        public async Task Export_ShouldReplaceOlderFiles()
         {
             var inputPath = CreateInputFile();
             var outputPath = GetTempPath();
@@ -51,6 +52,8 @@ namespace AssetMan.Test.Assets
                                   File.GetLastWriteTime(outputPath)
                                       .AddSeconds(1));
 
+            await Task.Delay(TimeSpan.FromMilliseconds(100))
+                      .ConfigureAwait(true);
             using (var asset = new Asset(inputPath))
                 asset.Export(outputPath, 100, 100);
 
