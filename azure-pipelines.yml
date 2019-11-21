@@ -3,14 +3,14 @@ trigger:
   branches:
     include:
     - '*'
+  tags:
+    include:
+    - '*'
 
 pr:
   branches:
     include:
       - '*'
-
-pool:
-  vmImage: windows-latest
 
 variables:
   BuildConfiguration: Release
@@ -21,58 +21,79 @@ variables:
   NugetVersion: '5.x'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
 
-steps:
-- task: UseDotNet@2
-  displayName: Use dotnet $(DotnetVersion)
-  inputs:
-    packageType: sdk
-    version: $(DotnetVersion)
+stages:
+- stage: test
+  jobs:
+  - job: dotnet
+    timeoutInMinutes: 15
+    pool:
+      vmImage: windows-latest
 
-- script: dotnet tool install -g nbgv
-  displayName: Install nbgv tool
+    steps:
+    - task: UseDotNet@2
+      displayName: Use dotnet $(DotnetVersion)
+      inputs:
+        packageType: sdk
+        version: $(DotnetVersion)
 
-- script: nbgv cloud
-  displayName: Set version in cloud environment
-
-- pwsh: |
-    ./Build-NugetPackage.ps1 `
-        -Configuration $(BuildConfiguration) `
-        -OutputDirectory '$(Build.ArtifactStagingDirectory)'
-  displayName: Pack nuget packages
-
-# Run all tests with "/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura" to generate the code coverage file
-- task: DotNetCoreCLI@2
+    - task: DotNetCoreCLI@2
       displayName: Test
       inputs:
         command: test
         arguments: --configuration $(BuildConfiguration)
         projects: $(TestProjects)
 
+- stage: Build and publish
+  jobs:
+  - job: PublishNugetPackage
+    timeoutInMinutes: 15
+    pool:
+      vmImage: windows-latest
+
+    steps:
+    - task: UseDotNet@2
+      displayName: Use dotnet $(DotnetVersion)
+      inputs:
+        packageType: sdk
+        version: $(DotnetVersion)
+
+    - script: dotnet tool install -g nbgv
+      displayName: Install nbgv tool
+
+    - script: nbgv cloud
+      displayName: Set version in cloud environment
+
+    - pwsh: |
+        ./Build-NugetPackage.ps1 `
+            -Configuration $(BuildConfiguration) `
+            -OutputDirectory '$(Build.ArtifactStagingDirectory)'
+      displayName: Pack nuget packages
+
     - task: NuGetCommand@2
       displayName: Push nuget packages
       inputs:
-    command: 'push'
-    feedsToUse: 'select'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
-    nuGetFeedType: 'internal'
-    publishVstsFeed: $(NugetFeed)
-    versioningScheme: 'off'
+        command: 'push'
+        feedsToUse: 'select'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: $(NugetFeed)
+        versioningScheme: 'off'
 
-- task: NuGetCommand@2
-  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
-  inputs:
-    command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
-    nuGetFeedType: 'external'
-    publishFeedCredentials: 'nuget - AssetMan* packages'
+    - task: NuGetCommand@2
+      condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+        nuGetFeedType: 'external'
+        publishFeedCredentials: 'nuget - AssetMan* packages'
 
-- task: PublishSymbols@2
-  inputs:
-    SearchPattern: '**/bin/**/*.pdb'
-    SymbolServerType: 'TeamServices'
+    - task: PublishSymbols@2
+      inputs:
+        SearchPattern: '**/bin/**/*.pdb'
+        SymbolServerType: 'TeamServices'
 
-- task: PublishPipelineArtifact@0
-  displayName: Publish artifacts
-  inputs:
-    artifactName: $(ArtifactName)
-    targetPath: '$(Build.ArtifactStagingDirectory)'
+    - task: PublishPipelineArtifact@0
+      displayName: Publish artifacts
+      inputs:
+        artifactName: $(ArtifactName)
+        targetPath: '$(Build.ArtifactStagingDirectory)'
