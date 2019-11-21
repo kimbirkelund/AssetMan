@@ -17,14 +17,20 @@ variables:
   TestProjects: src/**/*.Test.csproj
   ArtifactName: AssetMan
   NugetFeed: 'a009aa0f-b984-4f75-9908-96c2ba08e2ec/32936a78-ced4-48b3-b7e3-3c17135dfe30' # oss feed
-  DotnetVersion: 2.2.401
+  Dotnet2Version: 2.2.401
+  Dotnet3Version: 3.0.100
+  Mono2Version: '6_0_0'
+  Mono3Version: '6_4_0'
   NugetVersion: '5.x'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
 
+  AndroidProject: src/**/*.Android.csproj
+  IosProject: src/**/*.iOS.csproj
+
 stages:
-- stage: test
+- stage: Test
   jobs:
-  - job: dotnet
+  - job: dotnet2test
     timeoutInMinutes: 15
     pool:
       vmImage: windows-latest
@@ -34,7 +40,7 @@ stages:
       displayName: Use dotnet $(DotnetVersion)
       inputs:
         packageType: sdk
-        version: $(DotnetVersion)
+        version: $(Dotnet2Version)
 
     - task: DotNetCoreCLI@2
       displayName: Test
@@ -42,6 +48,109 @@ stages:
         command: test
         arguments: --configuration $(BuildConfiguration)
         projects: $(TestProjects)
+
+  - job: TestAndroid
+    timeoutInMinutes: 15
+    strategy:
+      matrix:
+        dotnet2:
+          DotnetVersion: $(Dotnet2Version)
+          MonoVersion: $(Mono2Version)
+        dotnet3:
+          DotnetVersion: $(Dotnet3Version)
+          MonoVersion: $(Mono3Version)
+
+    pool:
+      vmImage: macos-latest
+
+    steps:
+    - task: UseDotNet@2
+      displayName: Use dotnet $(DotnetVersion)
+      inputs:
+        packageType: sdk
+        version: $(Dotnet2Version)
+
+    - bash: |
+        SYMLINK=$(MonoVersion)
+
+        sudo $AGENT_HOMEDIRECTORY/scripts/select-xamarin-sdk.sh $SYMLINK
+
+        MONOPREFIX=/Library/Frameworks/Mono.framework/Versions/$SYMLINK
+        echo "##vso[task.setvariable variable=DYLD_FALLBACK_LIBRARY_PATH;]$MONOPREFIX/lib:/lib:/usr/lib:$DYLD_LIBRARY_FALLBACK_PATH"
+        echo "##vso[task.setvariable variable=PKG_CONFIG_PATH;]$MONOPREFIX/lib/pkgconfig:$MONOPREFIX/share/pkgconfig:$PKG_CONFIG_PATH"
+        echo "##vso[task.setvariable variable=PATH;]$MONOPREFIX/bin:$PATH"
+      displayName: "Set Xamarin SDK version to $(MonoVersion)"
+
+    - task: NuGetToolInstaller@0
+      displayName: Install nuget $(NugetVersion)
+      inputs:
+        versionSpec: $(NugetVersion)
+
+    - task: NuGetCommand@2
+      displayName: Restore packages
+      inputs:
+        restoreSolution: $(Solution)
+
+    - task: XamarinAndroid@1
+      displayName: Build Android app
+      inputs:
+        projectFile: $(AndroidProject)
+        configuration: $(BuildConfiguration)
+        createAppPackage: true
+        msbuildVersionOption: 'latest'
+
+  - job: TestIos
+    timeoutInMinutes: 15
+    strategy:
+      matrix:
+        dotnet2:
+          DotnetVersion: $(Dotnet2Version)
+          MonoVersion: $(Mono2Version)
+        dotnet3:
+          DotnetVersion: $(Dotnet3Version)
+          MonoVersion: $(Mono3Version)
+
+    pool:
+      vmImage: macos-latest
+
+    steps:
+    - task: UseDotNet@2
+      displayName: Use dotnet $(DotnetVersion)
+      inputs:
+        packageType: sdk
+        version: $(Dotnet2Version)
+
+    - bash: |
+        SYMLINK=$(MonoVersion)
+
+        sudo $AGENT_HOMEDIRECTORY/scripts/select-xamarin-sdk.sh $SYMLINK
+
+        MONOPREFIX=/Library/Frameworks/Mono.framework/Versions/$SYMLINK
+        echo "##vso[task.setvariable variable=DYLD_FALLBACK_LIBRARY_PATH;]$MONOPREFIX/lib:/lib:/usr/lib:$DYLD_LIBRARY_FALLBACK_PATH"
+        echo "##vso[task.setvariable variable=PKG_CONFIG_PATH;]$MONOPREFIX/lib/pkgconfig:$MONOPREFIX/share/pkgconfig:$PKG_CONFIG_PATH"
+        echo "##vso[task.setvariable variable=PATH;]$MONOPREFIX/bin:$PATH"
+      displayName: "Set Xamarin SDK version to $(MonoVersion)"
+
+    - task: NuGetToolInstaller@0
+      displayName: Install nuget $(NugetVersion)
+      inputs:
+        versionSpec: $(NugetVersion)
+
+    - task: NuGetCommand@2
+      displayName: Restore packages
+      inputs:
+        restoreSolution: $(Solution)
+
+    - task: XamariniOS@2
+      displayName: Build iOS app
+      inputs:
+        solutionFile: $(IosProject)
+        configuration: 'Release'
+        buildForSimulator: false
+        packageApp: true
+        signingIdentity: $(APPLE_CERTIFICATE_SIGNING_IDENTITY)
+        signingProvisioningProfileID: $(APPLE_PROV_PROFILE_UUID)
+
 
 - stage: BuildAndPublish
   jobs:
