@@ -43,7 +43,7 @@ stages:
         arguments: --configuration $(BuildConfiguration)
         projects: $(TestProjects)
 
-- stage: Build and publish
+- stage: BuildAndPublish
   jobs:
   - job: PublishNugetPackage
     timeoutInMinutes: 15
