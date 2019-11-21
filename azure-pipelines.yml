@@ -24,13 +24,40 @@ variables:
   NugetVersion: '5.x'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
 
+  NugetArtifactName: nupkg
   AndroidProject: src/**/*.Android.csproj
   IosProject: src/**/*.iOS.csproj
 
 stages:
-- stage: Test
+- stage: Build_and_test
   jobs:
-  - job: dotnet2test
+  - job: Run_dotnet_test
+    timeoutInMinutes: 15
+    strategy:
+      matrix:
+        dotnet2:
+          DotnetVersion: $(Dotnet2Version)
+        dotnet3:
+          DotnetVersion: $(Dotnet3Version)
+
+    pool:
+      vmImage: windows-latest
+
+    steps:
+    - task: UseDotNet@2
+      displayName: Use dotnet $(DotnetVersion)
+      inputs:
+        packageType: sdk
+        version: $(DotnetVersion)
+
+    - task: DotNetCoreCLI@2
+      displayName: Test
+      inputs:
+        command: test
+        arguments: --configuration $(BuildConfiguration)
+        projects: $(TestProjects)
+
+  - job: Build_nuget_package
     timeoutInMinutes: 15
     pool:
       vmImage: windows-latest
@@ -40,16 +67,27 @@ stages:
       displayName: Use dotnet $(DotnetVersion)
       inputs:
         packageType: sdk
-        version: $(Dotnet2Version)
+        version: $(DotnetVersion)
 
-    - task: DotNetCoreCLI@2
-      displayName: Test
-      inputs:
-        command: test
-        arguments: --configuration $(BuildConfiguration)
-        projects: $(TestProjects)
+    - script: dotnet tool install -g nbgv
+      displayName: Install nbgv tool
 
-  - job: TestAndroid
+    - script: nbgv cloud
+      displayName: Set version in cloud environment
+
+    - pwsh: |
+        ./Build-NugetPackage.ps1 `
+            -Configuration $(BuildConfiguration) `
+            -OutputDirectory '$(Build.ArtifactStagingDirectory)'
+      displayName: Pack nuget packages
+
+    - publish: '$(Build.ArtifactStagingDirectory)'
+      displayName: Publish nupkg as artifact
+      artifact: $(NugetArtifactName)
+
+- stage: Run_UI_tests
+  jobs:
+  - job: Test_Android
     timeoutInMinutes: 15
     strategy:
       matrix:
@@ -99,7 +137,7 @@ stages:
         createAppPackage: true
         msbuildVersionOption: 'latest'
 
-  - job: TestIos
+  - job: Test_iOS
     timeoutInMinutes: 15
     strategy:
       matrix:
@@ -152,38 +190,29 @@ stages:
         signingProvisioningProfileID: $(APPLE_PROV_PROFILE_UUID)
 
 
-- stage: BuildAndPublish
+- stage: Build_and_Publish_nuget_package
   jobs:
-  - job: PublishNugetPackage
+  - job: Build_and_Publish_nuget_package
     timeoutInMinutes: 15
     pool:
       vmImage: windows-latest
 
     steps:
-    - task: UseDotNet@2
-      displayName: Use dotnet $(DotnetVersion)
+    - task: NuGetToolInstaller@0
+      displayName: Install nuget $(NugetVersion)
       inputs:
-        packageType: sdk
-        version: $(DotnetVersion)
+        versionSpec: $(NugetVersion)
 
-    - script: dotnet tool install -g nbgv
-      displayName: Install nbgv tool
-
-    - script: nbgv cloud
-      displayName: Set version in cloud environment
-
-    - pwsh: |
-        ./Build-NugetPackage.ps1 `
-            -Configuration $(BuildConfiguration) `
-            -OutputDirectory '$(Build.ArtifactStagingDirectory)'
-      displayName: Pack nuget packages
+    - download: current
+      displayName: Download nupkg artifact
+      artifact: '$(NugetArtifactName)'
 
     - task: NuGetCommand@2
       displayName: Push nuget packages
       inputs:
         command: 'push'
         feedsToUse: 'select'
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+        packagesToPush: '$(Pipeline.Workspace)/$(NugetArtifactName)/**/*.nupkg;!$(Pipeline.Workspace)/$(NugetArtifactName)/**/*.symbols.nupkg'
         nuGetFeedType: 'internal'
         publishVstsFeed: $(NugetFeed)
         versioningScheme: 'off'
@@ -192,7 +221,7 @@ stages:
       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
       inputs:
         command: 'push'
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+        packagesToPush: '$(Pipeline.Workspace)/$(NugetArtifactName)/**/*.nupkg;!$(Pipeline.Workspace)/$(NugetArtifactName)/**/*.symbols.nupkg'
         nuGetFeedType: 'external'
         publishFeedCredentials: 'nuget - AssetMan* packages'
 
