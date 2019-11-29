@@ -214,7 +214,6 @@ stages:
       inputs:
         solutionFile: $(IosProject)
         configuration: $(BuildConfiguration)
-        buildForSimulator: true
         packageApp: false
 
     - pwsh: |
