@@ -29,34 +29,8 @@ variables:
   IosProject: src/**/*.iOS.csproj
 
 stages:
-- stage: Build_and_test
+- stage: Build_nuget_package
   jobs:
-  - job: Run_dotnet_test
-    timeoutInMinutes: 15
-    strategy:
-      matrix:
-        dotnet2:
-          DotnetVersion: $(Dotnet2Version)
-        dotnet3:
-          DotnetVersion: $(Dotnet3Version)
-
-    pool:
-      vmImage: windows-latest
-
-    steps:
-    - task: UseDotNet@2
-      displayName: Use dotnet $(DotnetVersion)
-      inputs:
-        packageType: sdk
-        version: $(DotnetVersion)
-
-    - task: DotNetCoreCLI@2
-      displayName: Test
-      inputs:
-        command: test
-        arguments: --configuration $(BuildConfiguration)
-        projects: $(TestProjects)
-
   - job: Build_nuget_package
     timeoutInMinutes: 15
     pool:
@@ -85,9 +59,35 @@ stages:
       displayName: Publish nupkg as artifact
       artifact: $(NugetArtifactName)
 
-- stage: Run_UI_tests
+- stage: Run_tests
   jobs:
-  - job: Test_Android
+  - job: Unit_test
+    timeoutInMinutes: 15
+    strategy:
+      matrix:
+        dotnet2:
+          DotnetVersion: $(Dotnet2Version)
+        dotnet3:
+          DotnetVersion: $(Dotnet3Version)
+
+    pool:
+      vmImage: windows-latest
+
+    steps:
+    - task: UseDotNet@2
+      displayName: Use dotnet $(DotnetVersion)
+      inputs:
+        packageType: sdk
+        version: $(DotnetVersion)
+
+    - task: DotNetCoreCLI@2
+      displayName: Test
+      inputs:
+        command: test
+        arguments: --configuration $(BuildConfiguration)
+        projects: $(TestProjects)
+
+  - job: UI_test_Android
     timeoutInMinutes: 15
     strategy:
       matrix:
@@ -144,7 +144,7 @@ stages:
         createAppPackage: true
         msbuildVersionOption: 'latest'
 
-  - job: Test_iOS
+  - job: UI_test_iOS
     timeoutInMinutes: 15
     strategy:
       matrix:
