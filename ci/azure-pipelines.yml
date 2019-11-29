@@ -162,7 +162,7 @@ stages:
         {
             Write-Error "AssetMan didn't run as expected. Resources not found in output."
         }
-      displayName: Asset build succeeded
+      displayName: Assert build succeeded
       continueOnError: false
 
   - job: Integration_test_iOS
