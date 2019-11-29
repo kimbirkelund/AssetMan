@@ -131,7 +131,7 @@ stages:
     - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(AndroidProject)" -Verbose
       displayName: Rewrite project file
 
-    - pwsh: Get-ChildItem -Recurse "$(AndroidProject)" |% { nuget restore $_ }
+    - pwsh: Get-ChildItem -Recurse "$(AndroidProject)" |% { msbuild /t:Restore $_ }
       displayName: Restore packages
 
     - task: XamarinAndroid@1
@@ -186,7 +186,7 @@ stages:
     - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(IosProject)" -Verbose
       displayName: Rewrite project file
 
-    - pwsh: Get-ChildItem -Recurse "$(IosProject)" |% { nuget restore $_ }
+    - pwsh: Get-ChildItem -Recurse "$(IosProject)" |% { msbuild /t:Restore $_ }
       displayName: Restore packages
 
     - task: XamariniOS@2
