@@ -16,7 +16,7 @@ if (Test-Path -PathType Container $NupkgPath)
         Select-Object -First 1;
 }
 
-$nupkgVersion = ([regex]"(?<version>\d+\.\d+\.\d+.*)\.nupkg$").Match($NupkgPath).Groups["version"].Value;
+$nupkgVersion = ([regex]"(?<version>\d+\.\d+\.\d+.*)\.nupkg$").Match((Split-Path -Leaf $NupkgPath)).Groups["version"].Value;
 Write-Verbose "nupkgVersion: $nupkgVersion";
 
 foreach ($projectFile in $ProjectFiles)
