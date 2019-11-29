@@ -292,9 +292,9 @@ stages:
       displayName: Assert build succeeded
       continueOnError: false
 
-- stage: Build_and_Publish_nuget_package
+- stage: Publish_nuget_package
   jobs:
-  - job: Build_and_Publish_nuget_package
+  - job: Publish_nuget_package
     timeoutInMinutes: 15
     pool:
       vmImage: windows-latest
