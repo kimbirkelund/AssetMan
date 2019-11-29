@@ -270,7 +270,7 @@ stages:
       displayName: Download nupkg artifact
       artifact: '$(NugetArtifactName)'
 
-    - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(IosProject)" -Verbose
+    - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(UwpProject)" -Verbose
       displayName: Rewrite project file
 
     - pwsh: |
