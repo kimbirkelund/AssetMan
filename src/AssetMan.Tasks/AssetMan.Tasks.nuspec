@@ -22,7 +22,6 @@
 
     <file src="bin\$Configuration$\netstandard2.0\**\*" target="tools\netstandard2.0" />
     <file src="bin\$Configuration$\net461\**\*" target="tools\net461" />
-    <file src="$PublishDir$\net461\**\*" target="tools\net461" />
-    <file src="$PublishDir$\netcoreapp2.2\**\*" target="tools\netcoreapp2.2" />
+    <file src="$PublishDir$\**" target="tools\" />
   </files>
 </package>

@@ -4,6 +4,7 @@
   <PropertyGroup>
     <OutputType>exe</OutputType>
     <TargetFrameworks>netcoreapp2.2;net461</TargetFrameworks>
+    <RollForward>Major</RollForward>
   </PropertyGroup>
 
   <ItemGroup>
