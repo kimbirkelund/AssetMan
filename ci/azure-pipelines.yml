@@ -149,7 +149,7 @@ stages:
             Split-Path -Parent |
             ForEach-Object {
                 Get-ChildItem `
-                    -Path (Join-Path $_ "obj" "$(BuildConfiguration)" "90" "res") `
+                    -Path (Join-Path $_ "obj" "$(BuildConfiguration)" "**" "res") `
                     -Filter logo.png `
                     -Recurse
             }
