@@ -133,7 +133,7 @@ stages:
     - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(AndroidProject)" -Verbose
       displayName: Rewrite project file
 
-    - pwsh: Get-ChildItem -Recurse "$(IosProject)" |% { msbuild /t:Restore $_ }
+    - pwsh: Get-ChildItem -Recurse "$(AndroidProject)" |% { msbuild /t:Restore $_ }
       displayName: Restore packages
 
     - task: XamarinAndroid@1
@@ -273,7 +273,7 @@ stages:
         $env:Path += ";$(Split-Path -Parent $msbuildPath)";
       displayName: Add msbuild to path
 
-    - pwsh: Get-ChildItem -Recurse "$(IosProject)" |% { msbuild /t:Restore $_ }
+    - pwsh: Get-ChildItem -Recurse "$(UwpProject)" |% { msbuild /t:Restore $_ }
       displayName: Restore packages
 
     - task: MSBuild@1
