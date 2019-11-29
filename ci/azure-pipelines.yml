@@ -271,6 +271,7 @@ stages:
         $msbuildPath = "$(vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe -nologo)";
 
         $env:Path += ";$(Split-Path -Parent $msbuildPath)";
+        Write-Host "Path: $($env:Path)";
       displayName: Add msbuild to path
 
     - pwsh: Get-ChildItem -Recurse "$(UwpProject)" |% { msbuild /t:Restore $_ }
@@ -283,6 +284,8 @@ stages:
         configuration: $(BuildConfiguration)
 
     - pwsh: |
+        Write-Host "Path: $($env:Path)";
+
         $results = Get-ChildItem -Recurse "$(UwpProject)" |
             Split-Path -Parent |
             ForEach-Object {
