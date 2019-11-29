@@ -266,6 +266,13 @@ stages:
     - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(IosProject)" -Verbose
       displayName: Rewrite project file
 
+    - pwsh: |
+        choco install vswhere
+        $msbuildPath = "$(vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe -nologo)";
+
+        $env:Path += ";$(Split-Path -Parent $msbuildPath)";
+      displayName: Add msbuild to path
+
     - pwsh: Get-ChildItem -Recurse "$(IosProject)" |% { msbuild /t:Restore $_ }
       displayName: Restore packages
 
