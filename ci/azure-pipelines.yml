@@ -214,10 +214,8 @@ stages:
       inputs:
         solutionFile: $(IosProject)
         configuration: 'Release'
-        buildForSimulator: false
-        packageApp: true
-        signingIdentity: $(APPLE_CERTIFICATE_SIGNING_IDENTITY)
-        signingProvisioningProfileID: $(APPLE_PROV_PROFILE_UUID)
+        buildForSimulator: true
+        packageApp: false
 
     - pwsh: |
         $results = Get-ChildItem -Recurse "$(IosProject)" |
