@@ -128,10 +128,10 @@ stages:
       displayName: Download nupkg artifact
       artifact: '$(NugetArtifactName)'
 
-    - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(AndroidProject)"
+    - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(AndroidProject)" -Verbose
       displayName: Rewrite project file
 
-    - pwsh: Get-ChildItem "$(AndroidProject)" |% { nuget restore $_ }
+    - pwsh: Get-ChildItem -Recurse "$(AndroidProject)" |% { nuget restore $_ }
       displayName: Restore packages
 
     - task: XamarinAndroid@1
@@ -183,10 +183,10 @@ stages:
       displayName: Download nupkg artifact
       artifact: '$(NugetArtifactName)'
 
-    - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(IosProject)"
+    - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(IosProject)" -Verbose
       displayName: Rewrite project file
 
-    - pwsh: Get-ChildItem "$(IosProject)" |% { nuget restore $_ }
+    - pwsh: Get-ChildItem -Recurse "$(IosProject)" |% { nuget restore $_ }
       displayName: Restore packages
 
     - task: XamariniOS@2
