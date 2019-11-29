@@ -124,6 +124,13 @@ stages:
       inputs:
         versionSpec: $(NugetVersion)
 
+    - download: current
+      displayName: Download nupkg artifact
+      artifact: '$(NugetArtifactName)'
+
+    - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(AndroidProject)"
+      displayName: Rewrite project file
+
     - task: NuGetCommand@2
       displayName: Restore packages
       inputs:
@@ -173,6 +180,13 @@ stages:
       displayName: Install nuget $(NugetVersion)
       inputs:
         versionSpec: $(NugetVersion)
+
+    - download: current
+      displayName: Download nupkg artifact
+      artifact: '$(NugetArtifactName)'
+
+    - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(IosProject)"
+      displayName: Rewrite project file
 
     - task: NuGetCommand@2
       displayName: Restore packages
