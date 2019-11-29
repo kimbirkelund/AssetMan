@@ -13,7 +13,7 @@ if (!$PackageVersion)
 
 $ErrorActionPreference = "Stop";
 
-Push-Location $PSScriptRoot;
+Push-Location (Split-Path -Parent $PSScriptRoot);
 try
 {
     # Publish CLI tool

@@ -76,7 +76,7 @@ stages:
       displayName: Set version in cloud environment
 
     - pwsh: |
-        ./Build-NugetPackage.ps1 `
+        ./ci/Build-NugetPackage.ps1 `
             -Configuration $(BuildConfiguration) `
             -OutputDirectory '$(Build.ArtifactStagingDirectory)'
       displayName: Pack nuget packages
