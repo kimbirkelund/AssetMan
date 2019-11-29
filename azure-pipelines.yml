@@ -17,8 +17,8 @@ variables:
   TestProjects: src/**/*.Test.csproj
   ArtifactName: AssetMan
   NugetFeed: 'a009aa0f-b984-4f75-9908-96c2ba08e2ec/32936a78-ced4-48b3-b7e3-3c17135dfe30' # oss feed
-  Dotnet2Version: 2.2.401
-  Dotnet3Version: 3.0.100
+  Dotnet2Version: 2.x
+  Dotnet3Version: 3.x
   Mono2Version: '6_0_0'
   Mono3Version: '6_4_0'
   NugetVersion: '5.x'
