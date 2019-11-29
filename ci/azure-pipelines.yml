@@ -15,6 +15,10 @@ pr:
 variables:
   BuildConfiguration: Release
   TestProjects: src/**/*.Test.csproj
+  AndroidProject: src/**/*.Android.csproj
+  IosProject: src/**/*.iOS.csproj
+  UwpProject: src/**/*.UWP.csproj
+
   ArtifactName: AssetMan
   NugetFeed: 'a009aa0f-b984-4f75-9908-96c2ba08e2ec/32936a78-ced4-48b3-b7e3-3c17135dfe30' # oss feed
   Dotnet2Version: 2.x
@@ -25,8 +29,6 @@ variables:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
 
   NugetArtifactName: nupkg
-  AndroidProject: src/**/*.Android.csproj
-  IosProject: src/**/*.iOS.csproj
 
 stages:
 - stage: Build_nuget_package
@@ -87,7 +89,7 @@ stages:
         arguments: --configuration $(BuildConfiguration)
         projects: $(TestProjects)
 
-  - job: UI_test_Android
+  - job: Integration_test_Android
     timeoutInMinutes: 15
     strategy:
       matrix:
@@ -131,9 +133,6 @@ stages:
     - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(AndroidProject)" -Verbose
       displayName: Rewrite project file
 
-    - pwsh: Get-ChildItem -Recurse "$(AndroidProject)" |% { msbuild /t:Restore $_ }
-      displayName: Restore packages
-
     - task: XamarinAndroid@1
       displayName: Build Android app
       inputs:
@@ -142,7 +141,25 @@ stages:
         createAppPackage: true
         msbuildVersionOption: 'latest'
 
-  - job: UI_test_iOS
+    - pwsh: |
+        $results = Get-ChildItem -Recurse "$(AndroidProject)" |
+            Split-Path -Parent |
+            ForEach-Object {
+                Get-ChildItem `
+                    -Path (Join-Path $_ "obj" "$(BuildConfiguration)" "90" "res") `
+                    -Filter logo.png `
+                    -Recurse
+            }
+
+        Write-Output $results;
+        if (!$results)
+        {
+            Write-Error "AssetMan didn't run as expected. Resources not found in output."
+        }
+      displayName: Asset build succeeded
+      continueOnError: false
+
+  - job: Integration_test_iOS
     timeoutInMinutes: 15
     strategy:
       matrix:
@@ -199,6 +216,81 @@ stages:
         signingIdentity: $(APPLE_CERTIFICATE_SIGNING_IDENTITY)
         signingProvisioningProfileID: $(APPLE_PROV_PROFILE_UUID)
 
+    - pwsh: |
+        $results = Get-ChildItem -Recurse "$(IosProject)" |
+            Split-Path -Parent |
+            ForEach-Object {
+                Get-ChildItem `
+                    -Path (Join-Path $_ "obj" "$(BuildConfiguration)") `
+                    -Filter logo.png `
+                    -Recurse
+            }
+
+        Write-Output $results;
+        if (!$results)
+        {
+            Write-Error "AssetMan didn't run as expected. Resources not found in output."
+        }
+      displayName: Assert build succeeded
+      continueOnError: false
+
+  - job: Integration_test_UWP
+    timeoutInMinutes: 15
+    strategy:
+      matrix:
+        dotnet2:
+          DotnetVersion: $(Dotnet2Version)
+        dotnet3:
+          DotnetVersion: $(Dotnet3Version)
+
+    pool:
+      vmImage: windows-latest
+
+    steps:
+    - task: UseDotNet@2
+      displayName: Use dotnet $(DotnetVersion)
+      inputs:
+        packageType: sdk
+        version: $(Dotnet2Version)
+
+    - task: NuGetToolInstaller@0
+      displayName: Install nuget $(NugetVersion)
+      inputs:
+        versionSpec: $(NugetVersion)
+
+    - download: current
+      displayName: Download nupkg artifact
+      artifact: '$(NugetArtifactName)'
+
+    - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(IosProject)" -Verbose
+      displayName: Rewrite project file
+
+    - pwsh: Get-ChildItem -Recurse "$(IosProject)" |% { msbuild /t:Restore $_ }
+      displayName: Restore packages
+
+    - task: MSBuild@1
+      displayName: Build UWP app
+      inputs:
+        solution: $(UwpProject)
+        configuration: $(BuildConfiguration)
+
+    - pwsh: |
+        $results = Get-ChildItem -Recurse "$(UwpProject)" |
+            Split-Path -Parent |
+            ForEach-Object {
+                Get-ChildItem `
+                    -Path (Join-Path $_ "bin" "$(BuildConfiguration)") `
+                    -Recurse
+            } |
+            Select-String "\\logo.scale-.*.png"
+
+        Write-Output $results;
+        if (!$results)
+        {
+            Write-Error "AssetMan didn't run as expected. Resources not found in output."
+        }
+      displayName: Assert build succeeded
+      continueOnError: false
 
 - stage: Build_and_Publish_nuget_package
   jobs:
