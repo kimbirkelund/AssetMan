@@ -213,7 +213,7 @@ stages:
       displayName: Build iOS app
       inputs:
         solutionFile: $(IosProject)
-        configuration: 'Release'
+        configuration: $(BuildConfiguration)
         buildForSimulator: true
         packageApp: false
 
