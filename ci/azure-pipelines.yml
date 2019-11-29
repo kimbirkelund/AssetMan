@@ -14,6 +14,7 @@ pr:
 
 variables:
   BuildConfiguration: Release
+  UwpPlatform: x86
   TestProjects: src/**/*.Test.csproj
   AndroidProject: src/**/*.Android.csproj
   IosProject: src/**/*.iOS.csproj
@@ -285,14 +286,14 @@ stages:
       displayName: Build UWP app
       inputs:
         solution: $(UwpProject)
-        platform: x86
+        platform: $(UwpPlatform)
         configuration: $(BuildConfiguration)
 
     - pwsh: |
         $results = Get-ChildItem -Recurse "$(UwpProject)" |
             Split-Path -Parent |
             ForEach-Object {
-                $path = Join-Path $_ "bin" "$(BuildConfiguration)";
+                $path = Join-Path $_ "bin" "$(UwpPlatform)" "$(BuildConfiguration)";
                 Write-Host "path: $path";
                 Write-Host "list: $(Get-ChildItem $path)"
 
