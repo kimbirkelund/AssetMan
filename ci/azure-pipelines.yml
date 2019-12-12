@@ -233,7 +233,7 @@ stages:
 
                 return Get-ChildItem `
                     -Path $path `
-                    -Filter logo.png `
+                    -Filter logo.png.* `
                     -Recurse
             }
 
