@@ -227,7 +227,7 @@ stages:
         $results = Get-ChildItem -Recurse "$(IosProject)" |
             Split-Path -Parent |
             ForEach-Object {
-                $path = Join-Path $_ "obj" "$(iPhoneSimulator)" "$(BuildConfiguration)";
+                $path = Join-Path $_ "obj" "iPhoneSimulator" "$(BuildConfiguration)";
                 Write-Host "path: $path";
                 Write-Host "list: $(Get-ChildItem $path)"
 
