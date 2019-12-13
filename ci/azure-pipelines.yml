@@ -222,6 +222,7 @@ stages:
         configuration: $(BuildConfiguration)
         packageApp: false
         buildForSimulator: true
+        args: /verbosity:diag
 
     - pwsh: |
         $results = Get-ChildItem -Recurse "$(IosProject)" |
