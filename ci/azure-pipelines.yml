@@ -229,7 +229,7 @@ stages:
             ForEach-Object {
                 $path = Join-Path $_ "obj";
                 Write-Host "path: $path";
-                Write-Host "files below $path:"
+                Write-Host "files below $($path):"
                 Get-ChildItem -Recurse $path | Write-Host;
 
                 return Get-ChildItem `
