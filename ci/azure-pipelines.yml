@@ -14,7 +14,13 @@ pr:
 
 variables:
   BuildConfiguration: Release
+  UwpPlatform: x86
+  IosPlatform: iPhoneSimulator
   TestProjects: src/**/*.Test.csproj
+  AndroidProject: src/**/*.Android.csproj
+  IosProject: src/**/*.iOS.csproj
+  UwpProject: src/**/*.UWP.csproj
+
   ArtifactName: AssetMan
   NugetFeed: 'a009aa0f-b984-4f75-9908-96c2ba08e2ec/32936a78-ced4-48b3-b7e3-3c17135dfe30' # oss feed
   Dotnet2Version: 2.x
@@ -25,38 +31,10 @@ variables:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
 
   NugetArtifactName: nupkg
-  AndroidProject: src/**/*.Android.csproj
-  IosProject: src/**/*.iOS.csproj
 
 stages:
-- stage: Build_and_test
+- stage: Build_nuget_package
   jobs:
-  - job: Run_dotnet_test
-    timeoutInMinutes: 15
-    strategy:
-      matrix:
-        dotnet2:
-          DotnetVersion: $(Dotnet2Version)
-        dotnet3:
-          DotnetVersion: $(Dotnet3Version)
-
-    pool:
-      vmImage: windows-latest
-
-    steps:
-    - task: UseDotNet@2
-      displayName: Use dotnet $(DotnetVersion)
-      inputs:
-        packageType: sdk
-        version: $(DotnetVersion)
-
-    - task: DotNetCoreCLI@2
-      displayName: Test
-      inputs:
-        command: test
-        arguments: --configuration $(BuildConfiguration)
-        projects: $(TestProjects)
-
   - job: Build_nuget_package
     timeoutInMinutes: 15
     pool:
@@ -85,9 +63,35 @@ stages:
       displayName: Publish nupkg as artifact
       artifact: $(NugetArtifactName)
 
-- stage: Run_UI_tests
+- stage: Run_tests
   jobs:
-  - job: Test_Android
+  - job: Unit_test
+    timeoutInMinutes: 15
+    strategy:
+      matrix:
+        dotnet2:
+          DotnetVersion: $(Dotnet2Version)
+        dotnet3:
+          DotnetVersion: $(Dotnet3Version)
+
+    pool:
+      vmImage: windows-latest
+
+    steps:
+    - task: UseDotNet@2
+      displayName: Use dotnet $(DotnetVersion)
+      inputs:
+        packageType: sdk
+        version: $(DotnetVersion)
+
+    - task: DotNetCoreCLI@2
+      displayName: Test
+      inputs:
+        command: test
+        arguments: --configuration $(BuildConfiguration)
+        projects: $(TestProjects)
+
+  - job: Integration_test_Android
     timeoutInMinutes: 15
     strategy:
       matrix:
@@ -124,10 +128,15 @@ stages:
       inputs:
         versionSpec: $(NugetVersion)
 
-    - task: NuGetCommand@2
+    - download: current
+      displayName: Download nupkg artifact
+      artifact: '$(NugetArtifactName)'
+
+    - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(AndroidProject)" -Verbose
+      displayName: Rewrite project file
+
+    - pwsh: Get-ChildItem -Recurse "$(AndroidProject)" |% { msbuild /t:Restore $_ }
       displayName: Restore packages
-      inputs:
-        restoreSolution: $(Solution)
 
     - task: XamarinAndroid@1
       displayName: Build Android app
@@ -137,7 +146,29 @@ stages:
         createAppPackage: true
         msbuildVersionOption: 'latest'
 
-  - job: Test_iOS
+    - pwsh: |
+        $results = Get-ChildItem -Recurse "$(AndroidProject)" |
+            Split-Path -Parent |
+            ForEach-Object {
+                $path = Join-Path $_ "obj" "$(BuildConfiguration)";
+                Write-Host "path: $path";
+                Write-Host "list: $(Get-ChildItem $path)"
+
+                return Get-ChildItem `
+                    -Path $path `
+                    -Filter logo.png `
+                    -Recurse
+            }
+
+        Write-Output "Results: $results";
+        if (!$results)
+        {
+            Write-Error "AssetMan didn't run as expected. Resources not found in output."
+        }
+      displayName: Assert build succeeded
+      continueOnError: false
+
+  - job: Integration_test_iOS
     timeoutInMinutes: 15
     strategy:
       matrix:
@@ -174,25 +205,116 @@ stages:
       inputs:
         versionSpec: $(NugetVersion)
 
-    - task: NuGetCommand@2
+    - download: current
+      displayName: Download nupkg artifact
+      artifact: '$(NugetArtifactName)'
+
+    - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(IosProject)" -Verbose
+      displayName: Rewrite project file
+
+    - pwsh: Get-ChildItem -Recurse "$(IosProject)" |% { msbuild /t:Restore $_ }
       displayName: Restore packages
-      inputs:
-        restoreSolution: $(Solution)
 
     - task: XamariniOS@2
       displayName: Build iOS app
       inputs:
         solutionFile: $(IosProject)
-        configuration: 'Release'
-        buildForSimulator: false
-        packageApp: true
-        signingIdentity: $(APPLE_CERTIFICATE_SIGNING_IDENTITY)
-        signingProvisioningProfileID: $(APPLE_PROV_PROFILE_UUID)
+        configuration: $(BuildConfiguration)
+        packageApp: false
+        buildForSimulator: true
+        args: /verbosity:diag
 
+    - pwsh: |
+        $results = Get-ChildItem -Recurse "$(IosProject)" |
+            Split-Path -Parent |
+            ForEach-Object {
+                $path = Join-Path $_ "obj";
+                Write-Host "path: $path";
+                Write-Host "list: $(Get-ChildItem $path -Recurse)"
 
-- stage: Build_and_Publish_nuget_package
+                return Get-ChildItem -Recurse |
+                  Select-String "logo.png" |
+                  Select-Object "Path";
+            }
+
+        Write-Output "Results: $results";
+        if (!$results)
+        {
+            Write-Error "AssetMan didn't run as expected. Resources not found in output."
+        }
+      displayName: Assert build succeeded
+      continueOnError: false
+
+  - job: Integration_test_UWP
+    timeoutInMinutes: 15
+    strategy:
+      matrix:
+        dotnet2:
+          DotnetVersion: $(Dotnet2Version)
+        dotnet3:
+          DotnetVersion: $(Dotnet3Version)
+
+    pool:
+      vmImage: windows-latest
+
+    steps:
+    - task: UseDotNet@2
+      displayName: Use dotnet $(DotnetVersion)
+      inputs:
+        packageType: sdk
+        version: $(Dotnet2Version)
+
+    - task: NuGetToolInstaller@0
+      displayName: Install nuget $(NugetVersion)
+      inputs:
+        versionSpec: $(NugetVersion)
+
+    - download: current
+      displayName: Download nupkg artifact
+      artifact: '$(NugetArtifactName)'
+
+    - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(UwpProject)" -Verbose
+      displayName: Rewrite project file
+
+    - pwsh: |
+        choco install vswhere
+        $msbuildPath = "$(vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe -nologo)";
+
+        Get-ChildItem -Recurse "$(UwpProject)" |% { & $msbuildPath /t:Restore $_ }
+      displayName: Restore packages
+
+    - task: VSBuild@1
+      displayName: Build UWP app
+      inputs:
+        solution: $(UwpProject)
+        platform: $(UwpPlatform)
+        configuration: $(BuildConfiguration)
+
+    - pwsh: |
+        $results = Get-ChildItem -Recurse "$(UwpProject)" |
+            Split-Path -Parent |
+            ForEach-Object {
+                $path = Join-Path $_ "bin" "$(UwpPlatform)" "$(BuildConfiguration)";
+                Write-Host "path: $path";
+                Write-Host "list: $(Get-ChildItem $path)"
+
+                return Get-ChildItem `
+                    -Path $path `
+                    -Recurse
+            } |
+            Select-String "\\logo.scale-.*.png"
+
+        Write-Output "Results: $results";
+        if (!$results)
+        {
+            Write-Error "AssetMan didn't run as expected. Resources not found in output."
+        }
+      displayName: Assert build succeeded
+      continueOnError: false
+
+- stage: Publish_nuget_package
   jobs:
-  - job: Build_and_Publish_nuget_package
+  - job: Publish_nuget_package
     timeoutInMinutes: 15
     pool:
       vmImage: windows-latest
