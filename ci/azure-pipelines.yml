@@ -226,18 +226,8 @@ stages:
 
     - pwsh: |
         $results = Get-ChildItem -Recurse "$(IosProject)" |
-            Split-Path -Parent |
-            ForEach-Object {
-                $path = Join-Path $_ "obj";
-                Write-Host "path: $path";
-                Write-Host "files below $($path):"
-                Get-ChildItem -Recurse $path | Write-Host;
-
-                return Get-ChildItem `
-                    -Path $path `
-                    -Filter logo.png.* `
-                    -Recurse
-            }
+            Select-String "logo.png" |
+            Select-String "Path";
 
         Write-Output "Results: $results";
         if (!$results)
