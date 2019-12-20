@@ -227,7 +227,7 @@ stages:
     - pwsh: |
         $results = Get-ChildItem -Recurse "$(IosProject)" |
             Select-String "logo.png" |
-            Select-String "Path";
+            Select-Object "Path";
 
         Write-Output "Results: $results";
         if (!$results)
