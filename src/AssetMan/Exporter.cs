@@ -17,7 +17,6 @@ namespace AssetMan
         {
             Register(new IosPlatform());
             Register(new AndroidPlatform());
-            Register(new UwpPlatform());
         }
 
         public void Export(Options configuration)

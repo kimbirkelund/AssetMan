@@ -2,358 +2,245 @@ trigger:
   batch: true
   branches:
     include:
-    - '*'
+      - "*"
   tags:
     include:
-    - '*'
+      - "*"
 
 pr:
   branches:
     include:
-      - '*'
+      - "*"
 
 variables:
   BuildConfiguration: Release
-  UwpPlatform: x86
   IosPlatform: iPhoneSimulator
   TestProjects: src/**/*.Test.csproj
   AndroidProject: src/**/*.Android.csproj
   IosProject: src/**/*.iOS.csproj
-  UwpProject: src/**/*.UWP.csproj
 
   ArtifactName: AssetMan
-  NugetFeed: 'a009aa0f-b984-4f75-9908-96c2ba08e2ec/32936a78-ced4-48b3-b7e3-3c17135dfe30' # oss feed
-  Dotnet2Version: 2.x
-  Dotnet3Version: 3.x
-  Mono2Version: '6_0_0'
-  Mono3Version: '6_4_0'
-  NugetVersion: '5.x'
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
+  NugetFeed: "a009aa0f-b984-4f75-9908-96c2ba08e2ec/32936a78-ced4-48b3-b7e3-3c17135dfe30" # oss feed
+  Dotnet6Version: 6.x
+  NugetVersion: "6.x"
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
 
   NugetArtifactName: nupkg
 
 stages:
-- stage: Build_nuget_package
-  jobs:
-  - job: Build_nuget_package
-    timeoutInMinutes: 15
-    pool:
-      vmImage: windows-latest
+  - stage: Build_nuget_package
+    jobs:
+      - job: Build_nuget_package
+        timeoutInMinutes: 15
+        pool:
+          vmImage: windows-latest
 
-    steps:
-    - task: UseDotNet@2
-      displayName: Use dotnet $(Dotnet3Version)
-      inputs:
-        packageType: sdk
-        version: $(Dotnet3Version)
+        steps:
+          - script: nbgv cloud
+            displayName: Set version in cloud environment
 
-    - script: dotnet tool install -g nbgv
-      displayName: Install nbgv tool
+          - pwsh: |
+              ./ci/Build-NugetPackage.ps1 `
+                  -Configuration $(BuildConfiguration) `
+                  -OutputDirectory '$(Build.ArtifactStagingDirectory)'
+            displayName: Pack nuget packages
 
-    - script: nbgv cloud
-      displayName: Set version in cloud environment
+          - publish: "$(Build.ArtifactStagingDirectory)"
+            displayName: Publish nupkg as artifact
+            artifact: $(NugetArtifactName)
 
-    - pwsh: |
-        ./ci/Build-NugetPackage.ps1 `
-            -Configuration $(BuildConfiguration) `
-            -OutputDirectory '$(Build.ArtifactStagingDirectory)'
-      displayName: Pack nuget packages
+  - stage: Run_tests
+    jobs:
+      - job: Unit_test
+        timeoutInMinutes: 15
+        strategy:
+          matrix:
+            dotnet6:
+              DotnetVersion: $(Dotnet6Version)
 
-    - publish: '$(Build.ArtifactStagingDirectory)'
-      displayName: Publish nupkg as artifact
-      artifact: $(NugetArtifactName)
+        pool:
+          vmImage: windows-latest
 
-- stage: Run_tests
-  jobs:
-  - job: Unit_test
-    timeoutInMinutes: 15
-    strategy:
-      matrix:
-        dotnet2:
-          DotnetVersion: $(Dotnet2Version)
-        dotnet3:
-          DotnetVersion: $(Dotnet3Version)
+        steps:
+          - task: UseDotNet@2
+            displayName: Use dotnet $(DotnetVersion)
+            inputs:
+              packageType: sdk
+              version: $(DotnetVersion)
 
-    pool:
-      vmImage: windows-latest
+          - task: DotNetCoreCLI@2
+            displayName: Test
+            inputs:
+              command: test
+              arguments: --configuration $(BuildConfiguration)
+              projects: $(TestProjects)
 
-    steps:
-    - task: UseDotNet@2
-      displayName: Use dotnet $(DotnetVersion)
-      inputs:
-        packageType: sdk
-        version: $(DotnetVersion)
+      - job: Integration_test_Android
+        timeoutInMinutes: 15
+        strategy:
+          matrix:
+            dotnet6:
+              DotnetVersion: $(Dotnet6Version)
 
-    - task: DotNetCoreCLI@2
-      displayName: Test
-      inputs:
-        command: test
-        arguments: --configuration $(BuildConfiguration)
-        projects: $(TestProjects)
+        pool:
+          vmImage: macos-latest
 
-  - job: Integration_test_Android
-    timeoutInMinutes: 15
-    strategy:
-      matrix:
-        dotnet2:
-          DotnetVersion: $(Dotnet2Version)
-          MonoVersion: $(Mono2Version)
-        dotnet3:
-          DotnetVersion: $(Dotnet3Version)
-          MonoVersion: $(Mono3Version)
+        steps:
+          - task: UseDotNet@2
+            displayName: Use dotnet $(DotnetVersion)
+            inputs:
+              packageType: sdk
+              version: $(DotnetVersion)
 
-    pool:
-      vmImage: macos-latest
+          - task: NuGetToolInstaller@0
+            displayName: Install nuget $(NugetVersion)
+            inputs:
+              versionSpec: $(NugetVersion)
 
-    steps:
-    - task: UseDotNet@2
-      displayName: Use dotnet $(DotnetVersion)
-      inputs:
-        packageType: sdk
-        version: $(Dotnet2Version)
+          - download: current
+            displayName: Download nupkg artifact
+            artifact: "$(NugetArtifactName)"
 
-    - bash: |
-        SYMLINK=$(MonoVersion)
+          - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(AndroidProject)" -Verbose
+            displayName: Rewrite project file
 
-        sudo $AGENT_HOMEDIRECTORY/scripts/select-xamarin-sdk.sh $SYMLINK
+          - pwsh: Get-ChildItem -Recurse "$(AndroidProject)" |% { msbuild /t:Restore $_ }
+            displayName: Restore packages
 
-        MONOPREFIX=/Library/Frameworks/Mono.framework/Versions/$SYMLINK
-        echo "##vso[task.setvariable variable=DYLD_FALLBACK_LIBRARY_PATH;]$MONOPREFIX/lib:/lib:/usr/lib:$DYLD_LIBRARY_FALLBACK_PATH"
-        echo "##vso[task.setvariable variable=PKG_CONFIG_PATH;]$MONOPREFIX/lib/pkgconfig:$MONOPREFIX/share/pkgconfig:$PKG_CONFIG_PATH"
-        echo "##vso[task.setvariable variable=PATH;]$MONOPREFIX/bin:$PATH"
-      displayName: "Set Xamarin SDK version to $(MonoVersion)"
+          - task: XamarinAndroid@1
+            displayName: Build Android app
+            inputs:
+              projectFile: $(AndroidProject)
+              configuration: $(BuildConfiguration)
+              createAppPackage: true
+              msbuildVersionOption: "latest"
 
-    - task: NuGetToolInstaller@0
-      displayName: Install nuget $(NugetVersion)
-      inputs:
-        versionSpec: $(NugetVersion)
+          - pwsh: |
+              $results = Get-ChildItem -Recurse "$(AndroidProject)" |
+                  Split-Path -Parent |
+                  ForEach-Object {
+                      $path = Join-Path $_ "obj" "$(BuildConfiguration)";
+                      Write-Host "path: $path";
+                      Write-Host "list: $(Get-ChildItem $path)"
 
-    - download: current
-      displayName: Download nupkg artifact
-      artifact: '$(NugetArtifactName)'
+                      return Get-ChildItem `
+                          -Path $path `
+                          -Filter logo.png `
+                          -Recurse
+                  }
 
-    - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(AndroidProject)" -Verbose
-      displayName: Rewrite project file
+              Write-Output "Results: $results";
+              if (!$results)
+              {
+                  Write-Error "AssetMan didn't run as expected. Resources not found in output."
+              }
+            displayName: Assert build succeeded
+            continueOnError: false
 
-    - pwsh: Get-ChildItem -Recurse "$(AndroidProject)" |% { msbuild /t:Restore $_ }
-      displayName: Restore packages
+      - job: Integration_test_iOS
+        timeoutInMinutes: 15
+        strategy:
+          matrix:
+            dotnet6:
+              DotnetVersion: $(Dotnet6Version)
 
-    - task: XamarinAndroid@1
-      displayName: Build Android app
-      inputs:
-        projectFile: $(AndroidProject)
-        configuration: $(BuildConfiguration)
-        createAppPackage: true
-        msbuildVersionOption: 'latest'
+        pool:
+          vmImage: macos-latest
 
-    - pwsh: |
-        $results = Get-ChildItem -Recurse "$(AndroidProject)" |
-            Split-Path -Parent |
-            ForEach-Object {
-                $path = Join-Path $_ "obj" "$(BuildConfiguration)";
-                Write-Host "path: $path";
-                Write-Host "list: $(Get-ChildItem $path)"
+        steps:
+          - task: UseDotNet@2
+            displayName: Use dotnet $(DotnetVersion)
+            inputs:
+              packageType: sdk
+              version: $(DotnetVersion)
 
-                return Get-ChildItem `
-                    -Path $path `
-                    -Filter logo.png `
-                    -Recurse
-            }
+          - task: NuGetToolInstaller@0
+            displayName: Install nuget $(NugetVersion)
+            inputs:
+              versionSpec: $(NugetVersion)
 
-        Write-Output "Results: $results";
-        if (!$results)
-        {
-            Write-Error "AssetMan didn't run as expected. Resources not found in output."
-        }
-      displayName: Assert build succeeded
-      continueOnError: false
+          - download: current
+            displayName: Download nupkg artifact
+            artifact: "$(NugetArtifactName)"
 
-  - job: Integration_test_iOS
-    timeoutInMinutes: 15
-    strategy:
-      matrix:
-        dotnet2:
-          DotnetVersion: $(Dotnet2Version)
-          MonoVersion: $(Mono2Version)
-        dotnet3:
-          DotnetVersion: $(Dotnet3Version)
-          MonoVersion: $(Mono3Version)
+          - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(IosProject)" -Verbose
+            displayName: Rewrite project file
 
-    pool:
-      vmImage: macos-latest
+          - pwsh: Get-ChildItem -Recurse "$(IosProject)" |% { msbuild /t:Restore $_ }
+            displayName: Restore packages
 
-    steps:
-    - task: UseDotNet@2
-      displayName: Use dotnet $(DotnetVersion)
-      inputs:
-        packageType: sdk
-        version: $(Dotnet2Version)
+          - task: XamariniOS@2
+            displayName: Build iOS app
+            inputs:
+              solutionFile: $(IosProject)
+              configuration: $(BuildConfiguration)
+              packageApp: false
+              buildForSimulator: true
+              args: /verbosity:diag
 
-    - bash: |
-        SYMLINK=$(MonoVersion)
+          - pwsh: |
+              $results = Get-ChildItem -Recurse "$(IosProject)" |
+                  Split-Path -Parent |
+                  ForEach-Object {
+                      $path = Join-Path $_ "obj";
+                      Write-Host "path: $path";
+                      Write-Host "list: $(Get-ChildItem $path -Recurse)"
 
-        sudo $AGENT_HOMEDIRECTORY/scripts/select-xamarin-sdk.sh $SYMLINK
+                      return Get-ChildItem -Recurse |
+                        Select-String "logo.png" |
+                        Select-Object "Path";
+                  }
 
-        MONOPREFIX=/Library/Frameworks/Mono.framework/Versions/$SYMLINK
-        echo "##vso[task.setvariable variable=DYLD_FALLBACK_LIBRARY_PATH;]$MONOPREFIX/lib:/lib:/usr/lib:$DYLD_LIBRARY_FALLBACK_PATH"
-        echo "##vso[task.setvariable variable=PKG_CONFIG_PATH;]$MONOPREFIX/lib/pkgconfig:$MONOPREFIX/share/pkgconfig:$PKG_CONFIG_PATH"
-        echo "##vso[task.setvariable variable=PATH;]$MONOPREFIX/bin:$PATH"
-      displayName: "Set Xamarin SDK version to $(MonoVersion)"
+              Write-Output "Results: $results";
+              if (!$results)
+              {
+                  Write-Error "AssetMan didn't run as expected. Resources not found in output."
+              }
+            displayName: Assert build succeeded
+            continueOnError: false
 
-    - task: NuGetToolInstaller@0
-      displayName: Install nuget $(NugetVersion)
-      inputs:
-        versionSpec: $(NugetVersion)
+  - stage: Publish_nuget_package
+    jobs:
+      - job: Publish_nuget_package
+        timeoutInMinutes: 15
+        pool:
+          vmImage: windows-latest
 
-    - download: current
-      displayName: Download nupkg artifact
-      artifact: '$(NugetArtifactName)'
+        steps:
+          - task: NuGetToolInstaller@0
+            displayName: Install nuget $(NugetVersion)
+            inputs:
+              versionSpec: $(NugetVersion)
 
-    - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(IosProject)" -Verbose
-      displayName: Rewrite project file
+          - download: current
+            displayName: Download nupkg artifact
+            artifact: "$(NugetArtifactName)"
 
-    - pwsh: Get-ChildItem -Recurse "$(IosProject)" |% { msbuild /t:Restore $_ }
-      displayName: Restore packages
+          - task: NuGetCommand@2
+            displayName: Push nuget packages
+            inputs:
+              command: "push"
+              feedsToUse: "select"
+              packagesToPush: "$(Pipeline.Workspace)/$(NugetArtifactName)/**/*.nupkg;!$(Pipeline.Workspace)/$(NugetArtifactName)/**/*.symbols.nupkg"
+              nuGetFeedType: "internal"
+              publishVstsFeed: $(NugetFeed)
+              versioningScheme: "off"
 
-    - task: XamariniOS@2
-      displayName: Build iOS app
-      inputs:
-        solutionFile: $(IosProject)
-        configuration: $(BuildConfiguration)
-        packageApp: false
-        buildForSimulator: true
-        args: /verbosity:diag
+          - task: NuGetCommand@2
+            condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
+            inputs:
+              command: "push"
+              packagesToPush: "$(Pipeline.Workspace)/$(NugetArtifactName)/**/*.nupkg;!$(Pipeline.Workspace)/$(NugetArtifactName)/**/*.symbols.nupkg"
+              nuGetFeedType: "external"
+              publishFeedCredentials: "nuget - AssetMan* packages"
 
-    - pwsh: |
-        $results = Get-ChildItem -Recurse "$(IosProject)" |
-            Split-Path -Parent |
-            ForEach-Object {
-                $path = Join-Path $_ "obj";
-                Write-Host "path: $path";
-                Write-Host "list: $(Get-ChildItem $path -Recurse)"
+          - task: PublishSymbols@2
+            inputs:
+              SearchPattern: "**/bin/**/*.pdb"
+              SymbolServerType: "TeamServices"
 
-                return Get-ChildItem -Recurse |
-                  Select-String "logo.png" |
-                  Select-Object "Path";
-            }
-
-        Write-Output "Results: $results";
-        if (!$results)
-        {
-            Write-Error "AssetMan didn't run as expected. Resources not found in output."
-        }
-      displayName: Assert build succeeded
-      continueOnError: false
-
-  - job: Integration_test_UWP
-    timeoutInMinutes: 15
-    strategy:
-      matrix:
-        dotnet2:
-          DotnetVersion: $(Dotnet2Version)
-        dotnet3:
-          DotnetVersion: $(Dotnet3Version)
-
-    pool:
-      vmImage: windows-latest
-
-    steps:
-    - task: UseDotNet@2
-      displayName: Use dotnet $(DotnetVersion)
-      inputs:
-        packageType: sdk
-        version: $(Dotnet2Version)
-
-    - task: NuGetToolInstaller@0
-      displayName: Install nuget $(NugetVersion)
-      inputs:
-        versionSpec: $(NugetVersion)
-
-    - download: current
-      displayName: Download nupkg artifact
-      artifact: '$(NugetArtifactName)'
-
-    - pwsh: ./ci/Rewrite-ToUseNugetPackage.ps1 -NupkgPath "$(Pipeline.Workspace)/$(NugetArtifactName)" -ProjectFile "$(UwpProject)" -Verbose
-      displayName: Rewrite project file
-
-    - pwsh: |
-        choco install vswhere
-        $msbuildPath = "$(vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe -nologo)";
-
-        Get-ChildItem -Recurse "$(UwpProject)" |% { & $msbuildPath /t:Restore $_ }
-      displayName: Restore packages
-
-    - task: VSBuild@1
-      displayName: Build UWP app
-      inputs:
-        solution: $(UwpProject)
-        platform: $(UwpPlatform)
-        configuration: $(BuildConfiguration)
-
-    - pwsh: |
-        $results = Get-ChildItem -Recurse "$(UwpProject)" |
-            Split-Path -Parent |
-            ForEach-Object {
-                $path = Join-Path $_ "bin" "$(UwpPlatform)" "$(BuildConfiguration)";
-                Write-Host "path: $path";
-                Write-Host "list: $(Get-ChildItem $path)"
-
-                return Get-ChildItem `
-                    -Path $path `
-                    -Recurse
-            } |
-            Select-String "\\logo.scale-.*.png"
-
-        Write-Output "Results: $results";
-        if (!$results)
-        {
-            Write-Error "AssetMan didn't run as expected. Resources not found in output."
-        }
-      displayName: Assert build succeeded
-      continueOnError: false
-
-- stage: Publish_nuget_package
-  jobs:
-  - job: Publish_nuget_package
-    timeoutInMinutes: 15
-    pool:
-      vmImage: windows-latest
-
-    steps:
-    - task: NuGetToolInstaller@0
-      displayName: Install nuget $(NugetVersion)
-      inputs:
-        versionSpec: $(NugetVersion)
-
-    - download: current
-      displayName: Download nupkg artifact
-      artifact: '$(NugetArtifactName)'
-
-    - task: NuGetCommand@2
-      displayName: Push nuget packages
-      inputs:
-        command: 'push'
-        feedsToUse: 'select'
-        packagesToPush: '$(Pipeline.Workspace)/$(NugetArtifactName)/**/*.nupkg;!$(Pipeline.Workspace)/$(NugetArtifactName)/**/*.symbols.nupkg'
-        nuGetFeedType: 'internal'
-        publishVstsFeed: $(NugetFeed)
-        versioningScheme: 'off'
-
-    - task: NuGetCommand@2
-      condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
-      inputs:
-        command: 'push'
-        packagesToPush: '$(Pipeline.Workspace)/$(NugetArtifactName)/**/*.nupkg;!$(Pipeline.Workspace)/$(NugetArtifactName)/**/*.symbols.nupkg'
-        nuGetFeedType: 'external'
-        publishFeedCredentials: 'nuget - AssetMan* packages'
-
-    - task: PublishSymbols@2
-      inputs:
-        SearchPattern: '**/bin/**/*.pdb'
-        SymbolServerType: 'TeamServices'
-
-    - task: PublishPipelineArtifact@0
-      displayName: Publish artifacts
-      inputs:
-        artifactName: $(ArtifactName)
-        targetPath: '$(Build.ArtifactStagingDirectory)'
+          - task: PublishPipelineArtifact@0
+            displayName: Publish artifacts
+            inputs:
+              artifactName: $(ArtifactName)
+              targetPath: "$(Build.ArtifactStagingDirectory)"
