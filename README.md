@@ -1,5 +1,3 @@
-![Logo](logo/logo.png)
-
 [![nuget package](https://img.shields.io/nuget/v/AssetMan)](https://www.nuget.org/packages/AssetMan)
 
 [![Build develop](https://img.shields.io/azure-devops/build/kimbirkelund/oss/12/develop?label=build%20develop)](https://dev.azure.com/kimbirkelund/oss/_build/latest?definitionId=12&branchName=develop)
