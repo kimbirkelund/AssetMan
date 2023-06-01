@@ -27,7 +27,7 @@ variables:
   Dotnet3Version: 3.x
   Mono2Version: '6_0_0'
   Mono3Version: '6_4_0'
-  NugetVersion: '5.x'
+  NugetVersion: '6.x'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
 
   NugetArtifactName: nupkg
