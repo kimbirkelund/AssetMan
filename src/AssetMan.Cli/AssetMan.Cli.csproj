@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <OutputType>exe</OutputType>
-    <TargetFrameworks>netcoreapp2.2;net461</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <RollForward>Major</RollForward>
   </PropertyGroup>
 
