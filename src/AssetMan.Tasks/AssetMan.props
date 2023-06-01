@@ -9,9 +9,8 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <TaskAssembly Condition=" '$(MSBuildRuntimeType)' == 'Core'">$(AssetManBasePath)/netstandard2.0/AssetMan.Tasks.dll</TaskAssembly>
-
-        <TaskAssembly Condition=" '$(MSBuildRuntimeType)' == 'Core' AND !Exists('$(TaskAssembly)') ">./bin/$(Configuration)/netstandard2.0/AssetMan.Tasks.dll</TaskAssembly>
+      <TaskAssembly>$(AssetManBasePath)/netstandard2.0/AssetMan.Tasks.dll</TaskAssembly>
+      <TaskAssembly Condition=" !Exists('$(TaskAssembly)') ">./bin/$(Configuration)/netstandard2.0/AssetMan.Tasks.dll</TaskAssembly>
     </PropertyGroup>
 
     <UsingTask TaskName="ExportAssets"
