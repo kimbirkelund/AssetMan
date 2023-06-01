@@ -223,11 +223,6 @@ stages:
               nuGetFeedType: "external"
               publishFeedCredentials: "nuget - AssetMan* packages"
 
-          - task: PublishSymbols@2
-            inputs:
-              SearchPattern: "**/bin/**/*.pdb"
-              SymbolServerType: "TeamServices"
-
           - task: PublishPipelineArtifact@0
             displayName: Publish artifacts
             inputs:
