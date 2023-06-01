@@ -23,10 +23,7 @@ variables:
 
   ArtifactName: AssetMan
   NugetFeed: 'a009aa0f-b984-4f75-9908-96c2ba08e2ec/32936a78-ced4-48b3-b7e3-3c17135dfe30' # oss feed
-  Dotnet2Version: 2.x
-  Dotnet3Version: 3.x
-  Mono2Version: '6_0_0'
-  Mono3Version: '6_4_0'
+  Dotnet6Version: 6.x
   NugetVersion: '6.x'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
 
@@ -60,10 +57,8 @@ stages:
     timeoutInMinutes: 15
     strategy:
       matrix:
-        dotnet2:
-          DotnetVersion: $(Dotnet2Version)
-        dotnet3:
-          DotnetVersion: $(Dotnet3Version)
+        dotnet6:
+          DotnetVersion: $(Dotnet6Version)
 
     pool:
       vmImage: windows-latest
@@ -86,12 +81,8 @@ stages:
     timeoutInMinutes: 15
     strategy:
       matrix:
-        dotnet2:
-          DotnetVersion: $(Dotnet2Version)
-          MonoVersion: $(Mono2Version)
-        dotnet3:
-          DotnetVersion: $(Dotnet3Version)
-          MonoVersion: $(Mono3Version)
+        dotnet6:
+          DotnetVersion: $(Dotnet6Version)
 
     pool:
       vmImage: macos-latest
@@ -101,18 +92,7 @@ stages:
       displayName: Use dotnet $(DotnetVersion)
       inputs:
         packageType: sdk
-        version: $(Dotnet2Version)
-
-    - bash: |
-        SYMLINK=$(MonoVersion)
-
-        sudo $AGENT_HOMEDIRECTORY/scripts/select-xamarin-sdk.sh $SYMLINK
-
-        MONOPREFIX=/Library/Frameworks/Mono.framework/Versions/$SYMLINK
-        echo "##vso[task.setvariable variable=DYLD_FALLBACK_LIBRARY_PATH;]$MONOPREFIX/lib:/lib:/usr/lib:$DYLD_LIBRARY_FALLBACK_PATH"
-        echo "##vso[task.setvariable variable=PKG_CONFIG_PATH;]$MONOPREFIX/lib/pkgconfig:$MONOPREFIX/share/pkgconfig:$PKG_CONFIG_PATH"
-        echo "##vso[task.setvariable variable=PATH;]$MONOPREFIX/bin:$PATH"
-      displayName: "Set Xamarin SDK version to $(MonoVersion)"
+        version: $(DotnetVersion)
 
     - task: NuGetToolInstaller@0
       displayName: Install nuget $(NugetVersion)
@@ -163,12 +143,8 @@ stages:
     timeoutInMinutes: 15
     strategy:
       matrix:
-        dotnet2:
-          DotnetVersion: $(Dotnet2Version)
-          MonoVersion: $(Mono2Version)
-        dotnet3:
-          DotnetVersion: $(Dotnet3Version)
-          MonoVersion: $(Mono3Version)
+        dotnet6:
+          DotnetVersion: $(Dotnet6Version)
 
     pool:
       vmImage: macos-latest
@@ -178,18 +154,7 @@ stages:
       displayName: Use dotnet $(DotnetVersion)
       inputs:
         packageType: sdk
-        version: $(Dotnet2Version)
-
-    - bash: |
-        SYMLINK=$(MonoVersion)
-
-        sudo $AGENT_HOMEDIRECTORY/scripts/select-xamarin-sdk.sh $SYMLINK
-
-        MONOPREFIX=/Library/Frameworks/Mono.framework/Versions/$SYMLINK
-        echo "##vso[task.setvariable variable=DYLD_FALLBACK_LIBRARY_PATH;]$MONOPREFIX/lib:/lib:/usr/lib:$DYLD_LIBRARY_FALLBACK_PATH"
-        echo "##vso[task.setvariable variable=PKG_CONFIG_PATH;]$MONOPREFIX/lib/pkgconfig:$MONOPREFIX/share/pkgconfig:$PKG_CONFIG_PATH"
-        echo "##vso[task.setvariable variable=PATH;]$MONOPREFIX/bin:$PATH"
-      displayName: "Set Xamarin SDK version to $(MonoVersion)"
+        version: $(DotnetVersion)
 
     - task: NuGetToolInstaller@0
       displayName: Install nuget $(NugetVersion)
@@ -240,10 +205,8 @@ stages:
     timeoutInMinutes: 15
     strategy:
       matrix:
-        dotnet2:
-          DotnetVersion: $(Dotnet2Version)
-        dotnet3:
-          DotnetVersion: $(Dotnet3Version)
+        dotnet6:
+          DotnetVersion: $(Dotnet6Version)
 
     pool:
       vmImage: windows-latest
@@ -253,7 +216,7 @@ stages:
       displayName: Use dotnet $(DotnetVersion)
       inputs:
         packageType: sdk
-        version: $(Dotnet2Version)
+        version: $(DotnetVersion)
 
     - task: NuGetToolInstaller@0
       displayName: Install nuget $(NugetVersion)
