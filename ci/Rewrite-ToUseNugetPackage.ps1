@@ -12,6 +12,7 @@ $ProjectFiles = Get-ChildItem -Recurse $ProjectFiles | Select-Object -ExpandProp
 if (Test-Path -PathType Container $NupkgPath)
 {
     $NupkgPath = Get-ChildItem -Recurse -Path $NupkgPath -Filter "AssetMan.*.nupkg" |
+        Where-Object { $_ -notmatch "\.symbols\." } |
         Sort-Object -Descending |
         Select-Object -First 1;
 }
