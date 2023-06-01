@@ -16,6 +16,8 @@ $ErrorActionPreference = "Stop";
 Push-Location (Split-Path -Parent $PSScriptRoot);
 try
 {
+    .\ci\Clean-ReadmeForNuget.ps1
+
     # Publish CLI tool
     dotnet msbuild `
     	"-t:Restore,PublishAll" `

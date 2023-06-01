@@ -1,5 +1,8 @@
-[![nuget package](https://img.shields.io/nuget/v/AssetMan)](https://www.nuget.org/packages/AssetMan)
+<!-- REMOVE FOR NUGET -->
+![Logo](logo/logo.png)
 
+[![nuget package](https://img.shields.io/nuget/v/AssetMan)](https://www.nuget.org/packages/AssetMan)
+<!-- /REMOVE FOR NUGET -->
 [![Build develop](https://img.shields.io/azure-devops/build/kimbirkelund/oss/12/develop?label=build%20develop)](https://dev.azure.com/kimbirkelund/oss/_build/latest?definitionId=12&branchName=develop)
 [![Test develop](https://img.shields.io/azure-devops/tests/kimbirkelund/oss/12/develop?label=test%20develop)](https://dev.azure.com/kimbirkelund/oss/_build/latest?definitionId=12&branchName=develop)
 
@@ -10,9 +13,11 @@ Resize Xamarin.Android and Xamarin.iOS assets automatically at build time.
 
 ## Installation and usage
 
-Available on [nuget.org](https://www.nuget.org/packages/AssetMan/). Simply install package into the platform projects.
+<!-- REMOVE FOR NUGET -->
+Available on [nuget.org](https://www.nuget.org/packages/AssetMan/).
+<!-- /REMOVE FOR NUGET -->
 
-Prerelease versions are available [here](https://dev.azure.com/kimbirkelund/oss/_packaging).
+Install package into the platform projects.
 
 The easiest way is to use **AssetMan** from its build task. Simply add the package reference to your **Xamarin.iOS**, **Xamarin.Android** or **Universal Windows Platform** project and add a `Config.assets.json` configuration file at the root of your project.
 
@@ -75,6 +80,8 @@ Contributions are welcome! If you find a bug please report it and if you want a 
 
 If you want to contribute code please file an issue and create a branch off of the current dev branch and file a pull request.
 
+<!-- REMOVE FOR NUGET -->
 ## Attributions
 
 This is, initially, a rebranding of [Assetxport](https://github.com/dotnet-ad/Assetxport), released under MIT, with the intention of supporting and furthering the project.
+<!-- /REMOVE FOR NUGET -->
