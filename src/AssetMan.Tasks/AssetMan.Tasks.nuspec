@@ -9,7 +9,7 @@
     <tags>Xamarin asset management cross platform xplat</tags>
     <license type="expression">MIT</license>
     <readme>docs\README.md</readme>
-    <icon>images\icon.png</icon>
+    <icon>images\logo.png</icon>
 
     <releaseNotes>- Update SkiaSharp for better MacOS support
 - Updated to .NET 6 CLI
