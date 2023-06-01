@@ -41,12 +41,6 @@ stages:
       vmImage: windows-latest
 
     steps:
-    - task: UseDotNet@2
-      displayName: Use dotnet $(Dotnet3Version)
-      inputs:
-        packageType: sdk
-        version: $(Dotnet3Version)
-
     - script: nbgv cloud
       displayName: Set version in cloud environment
 
