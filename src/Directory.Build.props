@@ -4,6 +4,9 @@
 
   <PropertyGroup>
     <LangVersion>preview</LangVersion>
+
+    <!-- Improves performance for Nerdbank.GitVersioning -->
+    <GitVersionBaseDirectory>$(MSBuildThisFileDirectory)</GitVersionBaseDirectory>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,5 +18,24 @@
                       Version="2022.3.1"
                       PrivateAssets="all"/>
 
+  </ItemGroup>
+
+  <!-- SourceLink setup -->
+  <PropertyGroup Condition="'$(TF_BUILD)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+
+    <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+    <!-- Embed source files that are not tracked by the source control manager in the PDB -->
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+    <!-- Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
+    <IncludeSymbols>true</IncludeSymbols>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TF_BUILD)' == 'true'">
+    <PackageReference Include="DotNet.ReproducibleBuilds" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
   </ItemGroup>
 </Project>
