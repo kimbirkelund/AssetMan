@@ -217,17 +217,6 @@ stages:
             artifact: "$(NugetArtifactName)"
 
           - task: NuGetCommand@2
-            displayName: Push nuget packages
-            inputs:
-              command: "push"
-              feedsToUse: "select"
-              packagesToPush: "$(Pipeline.Workspace)/$(NugetArtifactName)/**/*.nupkg;!$(Pipeline.Workspace)/$(NugetArtifactName)/**/*.symbols.nupkg"
-              nuGetFeedType: "internal"
-              publishVstsFeed: $(NugetFeed)
-              versioningScheme: "off"
-
-          - task: NuGetCommand@2
-            condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
             inputs:
               command: "push"
               packagesToPush: "$(Pipeline.Workspace)/$(NugetArtifactName)/**/*.nupkg;!$(Pipeline.Workspace)/$(NugetArtifactName)/**/*.symbols.nupkg"
