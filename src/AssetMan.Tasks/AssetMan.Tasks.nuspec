@@ -9,9 +9,15 @@
     <iconUrl>https://github.com/kimbirkelund/AssetMan/raw/main/logo/logo.png</iconUrl>
     <tags>Xamarin asset management cross platform xplat</tags>
     <license type="expression">MIT</license>
+    <readme>docs\README.md</readme>
+    <releaseNotes>- Update SkiaSharp for better MacOS support
+- Updated to .NET 6 CLI
+- Removed .NET Framework (and thus UWP) support</releaseNotes>
   </metadata>
 
   <files>
+    <file src="..\..\README.md" target="docs\" />
+
     <file src="_._" target="lib\netstandard2.0" />
 
     <file src="AssetMan.props" target="build\netstandard2.0\AssetMan.props" />
