@@ -8,7 +8,7 @@
 [![Build master](https://img.shields.io/azure-devops/build/kimbirkelund/oss/12/master?label=build%20master)](https://dev.azure.com/kimbirkelund/oss/_build/latest?definitionId=12&branchName=master)
 [![Test master](https://img.shields.io/azure-devops/tests/kimbirkelund/oss/12/master?label=test%20master)](https://dev.azure.com/kimbirkelund/oss/_build/latest?definitionId=12&branchName=master)
 
-Resize UWP, Xamarin.Android and Xamarin.iOS assets automatically at build time.
+Resize Xamarin.Android and Xamarin.iOS assets automatically at build time.
 
 
 ## Installation and usage
@@ -23,7 +23,7 @@ The easiest way is to use **AssetMan** from its build task. Simply add the packa
 
 ```json
 {
-  "Platform": "<iOS|Android|UWP>",
+  "Platform": "<iOS|Android>",
   "Input": [ "<input folder path relative to this file, containing all the source hd assets>" ],
   "Output": "<output folder path relative to this file, where all the density assets are generated to>"
 }
@@ -62,10 +62,6 @@ Assets are generated as asset catalog entries (`.imageset`).
 ### Android
 
 Assets are generated inside qualified drawable sub folders (`drawable-hdpi`, `drawable-xhdpi`, ...).
-
-### UWP
-
-Assets are generated with a qualified suffix indicating the scale (`scale-100`, `scale-240`, ...).
 
 
 ## CLI

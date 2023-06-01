@@ -50,16 +50,4 @@
         </ItemGroup>
     </Target>
 
-    <Target Name="AssetMan_IncludeUWPAssets"
-            AfterTargets="AssetMan_GenerateAssets"
-            Condition=" '$(TargetPlatformIdentifier)' == 'UAP' ">
-        <Message Text="Including UWP resources: $(GeneratedAssets)" />
-
-        <ItemGroup>
-            <Content Include="$(GeneratedAssets)">
-                <Visible>false</Visible>
-            </Content>
-        </ItemGroup>
-    </Target>
-
 </Project>

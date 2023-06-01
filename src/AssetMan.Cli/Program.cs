@@ -87,7 +87,7 @@ namespace AssetMan.Cli
             [Description("The path to the output folder that will contain all your exported assets.")]
             public string Output { get; set; }
 
-            [Description("The target platform (iOS|Android|UWP)")]
+            [Description("The target platform (iOS|Android)")]
             public string Platform { get; set; }
         }
     }
