@@ -13,6 +13,7 @@ pr:
       - "*"
 
 variables:
+  CI: "1"
   BuildConfiguration: Release
   IosPlatform: iPhoneSimulator
   TestProjects: src/**/*.Test.csproj

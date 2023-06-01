@@ -3,7 +3,8 @@ PARAM(
     [string]$PackageVersion,
     [switch]$NoBuild,
     [string]$OutputDirectory = $PWD,
-    [string]$Configuration = "Debug"
+    [string]$Configuration = "Debug",
+    [switch]$CleanReadmeFile = $($env:CI -eq "1")
 )
 
 if (!$PackageVersion)
@@ -16,11 +17,15 @@ $ErrorActionPreference = "Stop";
 Push-Location (Split-Path -Parent $PSScriptRoot);
 try
 {
-    .\ci\Clean-ReadmeForNuget.ps1
+    if ($CleanReadmeFile)
+    {
+        Write-Host "Cleaning README..."
+        .\ci\Clean-ReadmeForNuget.ps1
+    }
 
     # Publish CLI tool
     dotnet msbuild `
-    	"-t:Restore,PublishAll" `
+        "-t:Restore,PublishAll" `
         .\src\AssetMan.Cli\AssetMan.Cli.csproj `
         "-p:Configuration=$Configuration" `
         "-p:BasePublishDir=$(Join-Path $PWD publish)";
