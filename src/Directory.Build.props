@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0"
          xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <!-- SourceLink setup -->
-  <PropertyGroup Condition="'$(TF_BUILD)' == 'true'">
+  <PropertyGroup Condition=" '$(TF_BUILD)' == 'true' AND !$(MSBuildProjectName.EndsWith('.Test')) ">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 
     <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
@@ -34,7 +34,7 @@
     <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TF_BUILD)' == 'true'">
+  <ItemGroup Condition=" '$(TF_BUILD)' == 'true' AND !$(MSBuildProjectName.EndsWith('.Test')) ">
     <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1" PrivateAssets="All" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
